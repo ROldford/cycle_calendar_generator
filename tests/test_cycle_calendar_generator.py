@@ -22,21 +22,17 @@ class Test_get_args(unittest.TestCase):
     @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.ArgumentParser.parse_args')
     def test_if_arg_is_string(self, mock_parse_args):
         """Normal input on command line"""
-        mock_parse_args.return_value = cycle_calendar_generator.argparse.Namespace(directory='string')
+        mock_parse_args.return_value = cycle_calendar_generator.argparse.Namespace(folder='string')
         self.assertIsInstance(cycle_calendar_generator.getArgs(), str)
 
     @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.ArgumentParser.parse_args')
-    def test_if_arg_is_not_string(self, mock_parse_args):
-        """Abnormal command line input"""
-        mock_parse_args.return_value = cycle_calendar_generator.argparse.Namespace(directory=42)
-        self.assertRaises(SyntaxError, cycle_calendar_generator.getArgs)
-
-    # @mock.patch('cycle_calendar_generator.argparse.parse_args')
-    # @mock.patch('cycle_calendar_generator.argparse.parse_args')
-    # def test_gets_current_dir_if_no_arg_given(self):
-    #     """Test something."""
-        # mock_parse_args.return_value = argparse.Namespace(directory=None)
-        # self.assertRaises(SyntaxError, cycle_calendar_generator.getArgs)
+    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.getcwd')
+    def test_gets_current_dir_if_no_arg_given(self, mock_getcwd, mock_parse_args):
+        """Use current working directory if no folder given"""
+        cwd_string = 'current working directory'
+        mock_parse_args.return_value = cycle_calendar_generator.argparse.Namespace(folder=None)
+        mock_getcwd.return_value = cwd_string
+        self.assertEqual(cycle_calendar_generator.getArgs(), cwd_string)
 
 
 
