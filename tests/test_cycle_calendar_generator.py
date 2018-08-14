@@ -5,11 +5,12 @@
 
 
 import unittest
+from unittest import mock
 
 from cycle_calendar_generator import cycle_calendar_generator
 
 
-class TestCycle_calendar_generator(unittest.TestCase):
+class Test_get_args(unittest.TestCase):
     """Tests for `cycle_calendar_generator` package."""
 
     def setUp(self):
@@ -18,10 +19,27 @@ class TestCycle_calendar_generator(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_000_something(self):
-        """Test something."""
+    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.parse_args')
+    def test_if_arg_is_string(self, mock_parse_args):
+        mock_parse_args.return_value = cycle_calendar_generator.cycle_calendar_generator.argparse.Namespace(directory='string')
+        self.assertIsInstance(cycle_calendar_generator.getArgs(), str)
+
+    # @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.parse_args')
+    # def test_if_arg_is_not_string(self):
+    #     """Test something."""
+    #     mock_parse_args.return_value = cycle_calendar_generator.cycle_calendar_generator.argparse.Namespace(directory=42)
+    #     self.assertRaises(SyntaxError, cycle_calendar_generator.getArgs)
+
+    # @mock.patch('cycle_calendar_generator.argparse.parse_args')
+    # @mock.patch('cycle_calendar_generator.argparse.parse_args')
+    # def test_gets_current_dir_if_no_arg_given(self):
+    #     """Test something."""
+        # mock_parse_args.return_value = argparse.Namespace(directory=None)
+        # self.assertRaises(SyntaxError, cycle_calendar_generator.getArgs)
 
 
+
+# Get directory from args
 # Check for schedule setup Excel file
 # Open and parse schedule setup file (checking for valid data)
 # Parsing should generate:
