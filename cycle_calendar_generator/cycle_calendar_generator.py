@@ -9,5 +9,8 @@ def getArgs():
     parser = argparse.ArgumentParser(description='Input folder')
     parser.add_argument('folder', nargs='?', action='store', help='folder with input Excel files')
     parsed_args = parser.parse_args()
-    return_value = parsed_args.folder
+    if parsed_args.folder == None:
+        return_value = getcwd()
+    else:
+        return_value = parsed_args.folder
     return return_value
