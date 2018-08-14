@@ -19,16 +19,17 @@ class Test_get_args(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.parse_args')
+    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.ArgumentParser.parse_args')
     def test_if_arg_is_string(self, mock_parse_args):
-        mock_parse_args.return_value = cycle_calendar_generator.cycle_calendar_generator.argparse.Namespace(directory='string')
+        """Normal input on command line"""
+        mock_parse_args.return_value = cycle_calendar_generator.argparse.Namespace(directory='string')
         self.assertIsInstance(cycle_calendar_generator.getArgs(), str)
 
-    # @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.parse_args')
-    # def test_if_arg_is_not_string(self):
-    #     """Test something."""
-    #     mock_parse_args.return_value = cycle_calendar_generator.cycle_calendar_generator.argparse.Namespace(directory=42)
-    #     self.assertRaises(SyntaxError, cycle_calendar_generator.getArgs)
+    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.argparse.ArgumentParser.parse_args')
+    def test_if_arg_is_not_string(self, mock_parse_args):
+        """Abnormal command line input"""
+        mock_parse_args.return_value = cycle_calendar_generator.argparse.Namespace(directory=42)
+        self.assertRaises(SyntaxError, cycle_calendar_generator.getArgs)
 
     # @mock.patch('cycle_calendar_generator.argparse.parse_args')
     # @mock.patch('cycle_calendar_generator.argparse.parse_args')
