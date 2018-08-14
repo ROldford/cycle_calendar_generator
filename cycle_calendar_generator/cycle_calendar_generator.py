@@ -2,9 +2,12 @@
 
 """Main module."""
 import argparse
+from os import getcwd
 
 def getArgs():
-    returnValue = ''
+    return_value = ''
     parser = argparse.ArgumentParser(description='Input folder')
-    parser.add_argument('directory', action='store', )
-    return returnValue
+    parser.add_argument('folder', nargs='?', action='store', help='folder with input Excel files')
+    parsed_args = parser.parse_args()
+    return_value = parsed_args.folder
+    return return_value
