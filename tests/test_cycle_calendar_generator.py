@@ -70,10 +70,10 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
             bad_folder_path
         )
 
-    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.listdir')
-    def test_raises_exception_if_no_setup_file(self, mock_listdir):
+    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.scandir')
+    def test_raises_exception_if_no_setup_file(self, mock_scandir):
         """If no Excel file matching preset filename exists, throw ValueError"""
-        mock_listdir.return_value = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
+        mock_scandir.return_value = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
         self.assertRaises(
             ValueError,
             cycle_calendar_generator.parseScheduleSetup,

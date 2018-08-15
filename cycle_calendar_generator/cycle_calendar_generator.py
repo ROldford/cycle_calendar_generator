@@ -3,6 +3,7 @@
 """Main module."""
 import argparse
 from os import getcwd
+from os import scandir
 from os import path
 
 def getArgs():
