@@ -3,7 +3,7 @@
 """Main module."""
 import argparse
 from os import getcwd
-from os import listdir
+from os import path
 
 def getArgs():
     return_value = None
@@ -23,4 +23,8 @@ def getArgs():
 
 def parseScheduleSetup(folder):
     return_value = None
+    if (path.islink(folder)):
+        return_value = '?'
+    else:
+        raise ValueError('Not a valid folder')
     return return_value
