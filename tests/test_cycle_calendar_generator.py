@@ -58,14 +58,14 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
         returning object containing setup dicts and lists"""
         pass
 
-    # @mock.patch()
     def test_raises_exception_if_invalid_path(self):
         """If input string is not a valid folder path, throw ValueError"""
         # create an invalid folder path
         bad_folder_path = getcwd() + '/notafolder'
         # pass into parseScheduleSetup and check for error raised
-        self.assertRaises(
+        self.assertRaisesRegex(
             ValueError,
+            'Not a valid folder',
             cycle_calendar_generator.parseScheduleSetup,
             bad_folder_path
         )
@@ -74,11 +74,13 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     def test_raises_exception_if_no_setup_file(self, mock_scandir):
         """If no Excel file matching preset filename exists, throw ValueError"""
         mock_scandir.return_value = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
-        self.assertRaises(
+        self.assertRaisesRegex(
             ValueError,
+            'No schedule setup file found',
             cycle_calendar_generator.parseScheduleSetup,
             getcwd()
         )
+
 
 
 
