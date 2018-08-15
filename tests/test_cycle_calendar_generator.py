@@ -6,6 +6,7 @@
 
 import unittest
 from unittest import mock
+from os import getcwd
 
 from cycle_calendar_generator import cycle_calendar_generator
 
@@ -57,11 +58,28 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
         returning object containing setup dicts and lists"""
         pass
 
+    # @mock.patch()
+    def test_raises_exception_if_invalid_path(self):
+        """If input string is not a valid folder path, throw ValueError"""
+        # create an invalid folder path
+        bad_folder_path = getcwd() + '/notafolder'
+        # pass into parseScheduleSetup and check for error raised
+        self.assertRaises(
+            ValueError,
+            cycle_calendar_generator.parseScheduleSetup,
+            bad_folder_path
+        )
+
     @mock.patch('cycle_calendar_generator.cycle_calendar_generator.listdir')
-    def test_passes_exception_if_no_setup_file(self, mock_listdir):
+    def test_raises_exception_if_no_setup_file(self, mock_listdir):
         """If no Excel file matching preset filename exists, throw ValueError"""
         mock_listdir.return_value = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
-        self.assertRaises(ValueError, cycle_calendar_generator.parseScheduleSetup)
+        self.assertRaises(
+            ValueError,
+            cycle_calendar_generator.parseScheduleSetup,
+            getcwd()
+        )
+
 
 
 
