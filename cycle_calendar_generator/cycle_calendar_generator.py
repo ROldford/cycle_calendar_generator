@@ -8,7 +8,12 @@ from os import listdir
 def getArgs():
     return_value = None
     parser = argparse.ArgumentParser(description='Input folder')
-    parser.add_argument('folder', nargs='?', action='store', help='folder with input Excel files')
+    parser.add_argument(
+        'folder',
+        nargs='?',
+        action='store',
+        help='folder with input Excel files'
+    )
     parsed_args = parser.parse_args()
     if parsed_args.folder == None:
         return_value = getcwd()
@@ -16,6 +21,6 @@ def getArgs():
         return_value = parsed_args.folder
     return return_value
 
-def parseScheduleSetup():
+def parseScheduleSetup(folder):
     return_value = None
     return return_value
