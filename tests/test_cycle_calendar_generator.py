@@ -6,7 +6,9 @@
 
 import unittest
 from unittest import mock
-from os import getcwd
+import os
+
+from pyfakefs import fake_filesystem_unittest
 
 from cycle_calendar_generator import cycle_calendar_generator
 
@@ -44,7 +46,7 @@ class Test_get_args(unittest.TestCase):
         mock_getcwd.return_value = cwd_string
         self.assertEqual(cycle_calendar_generator.getArgs(), cwd_string)
 
-class Test_parse_schedule_setup_file(unittest.TestCase):
+class Test_parse_schedule_setup_file(fake_filesystem_unittest.TestCase):
     # Check for schedule setup Excel file
     # Open and parse schedule setup file (checking for valid data)
     # Parsing should generate:
@@ -52,6 +54,38 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     ## [list]CycleDaysList -> (str)cycleDay {showing all cycleDay strings}
     ## [dict]yearlySchedule -> [Date]date: [str]cycleDay
     """Tests function to open and parse schedule setup Excel file"""
+
+    good_folder_path = ''
+    bad_folder_path = ''
+    not_a_folder_path = ''
+    bad_folder_filename_list = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
+    good_folder_filename_list = (
+      bad_folder_filename_list
+      + [cycle_calendar_generator.SCHEDULE_SETUP_FILENAME]
+    )
+    bad_folder_full_filepath_list = []
+    good_folder_full_filepath_list = []
+
+    def setUp(self):
+      self.setUpPyfakefs()
+      # set up variables
+      self.good_folder_path = '/test-good'
+      self.bad_folder_path = '/test-bad'
+      self.not_a_folder_path = '/test-notafolder'
+      # Make file paths in fakefs
+      os.mkdir(self.good_folder_path)
+      os.mkdir(self.bad_folder_path)
+      # Add files in fakefs
+
+      for file in self.bad_folder_filename_list:
+        bad_folder_filepath = "{}/{}".format(self.bad_folder_path, file)
+        self.bad_folder_full_filepath_list.append(bad_folder_filepath)
+        open(bad_folder_filepath, 'a').close()
+
+      for file in self.good_folder_filename_list:
+        good_folder_filepath = "{}/{}".format(self.good_folder_path, file)
+        self.good_folder_full_filepath_list.append(good_folder_filepath)
+        open(good_folder_filepath, 'a').close()
 
     def test_opens_and_parses_correct_file(self):
         """Expected behavior: finds file with preset filename, opens and parses,
@@ -61,24 +95,21 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     def test_raises_exception_if_invalid_path(self):
         """If input string is not a valid folder path, throw ValueError"""
         # create an invalid folder path
-        bad_folder_path = getcwd() + '/notafolder'
         # pass into parseScheduleSetup and check for error raised
         self.assertRaisesRegex(
             ValueError,
-            'Not a valid folder',
+            'Not a valid folder', # TODO: use string constant from code
             cycle_calendar_generator.parseScheduleSetup,
-            bad_folder_path
+            self.not_a_folder_path
         )
 
-    @mock.patch('cycle_calendar_generator.cycle_calendar_generator.scandir')
-    def test_raises_exception_if_no_setup_file(self, mock_scandir):
+    def test_raises_exception_if_no_setup_file(self):
         """If no Excel file matching preset filename exists, throw ValueError"""
-        mock_scandir.return_value = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
         self.assertRaisesRegex(
             ValueError,
-            'No schedule setup file found',
+            'No schedule setup file found', # TODO: use string constant from code
             cycle_calendar_generator.parseScheduleSetup,
-            getcwd()
+            self.bad_folder_path
         )
 
 
