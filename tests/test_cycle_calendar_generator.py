@@ -10,6 +10,7 @@ import os
 import datetime
 
 from pyfakefs import fake_filesystem_unittest
+import openpyxl
 
 from cycle_calendar_generator import cycle_calendar_generator
 
@@ -56,16 +57,10 @@ class Test_parse_schedule_setup_file(fake_filesystem_unittest.TestCase):
     ## [dict]yearlySchedule -> [Date]date: [str]cycleDay
     """Tests function to open and parse schedule setup Excel file"""
     # Setting up folder paths for fakefs
-    good_folder_path = ''
-    bad_folder_path = ''
-    not_a_folder_path = ''
-    bad_folder_filename_list = ['TeacherOne.xlsx', 'TeacherTwo.xlsx']
-    good_folder_filename_list = (
-      bad_folder_filename_list
-      + [cycle_calendar_generator.SCHEDULE_SETUP_FILENAME]
+    test_folder_path = '/test-folder'
+    setup_filepath = "{}/{}".format(
+      test_folder_path, cycle_calendar_generator.SCHEDULE_SETUP_FILENAME
     )
-    bad_folder_full_filepath_list = []
-    good_folder_full_filepath_list = []
     # Setting up good and bad Excel files
     data_periodTiming = [
       ["Period Number", "Start Time", "End Time"],
@@ -93,14 +88,14 @@ class Test_parse_schedule_setup_file(fake_filesystem_unittest.TestCase):
     sheetname_periodTiming = "Period Timing"
     sheetname_cycleDaysList = "Cycle Days List"
     sheetname_yearlySchedule = "Yearly Schedule"
-    ws_periodTiming = wb_good.create_sheet(sheetname_periodTiming)
-    ws_cycleDaysList = wb_good.create_sheet(sheetname_cycleDaysList)
-    ws_yearlySchedule = wb_good.create_sheet(sheetname_yearlySchedule)
+    ws_periodTiming = wb_setup_good.create_sheet(sheetname_periodTiming)
+    ws_cycleDaysList = wb_setup_good.create_sheet(sheetname_cycleDaysList)
+    ws_yearlySchedule = wb_setup_good.create_sheet(sheetname_yearlySchedule)
     for line in data_periodTiming:
       ws_periodTiming.append(line)
     ws_cycleDaysList.append(data_cycleDaysList)
     for line in data_yearlySchedule:
-      ws_yearlySchedule(line)
+      ws_yearlySchedule.append(line)
     wb_setup_bad = openpyxl.Workbook()
     ws_bad = wb_setup_bad.active
     for line in data_badExcel:
@@ -109,26 +104,25 @@ class Test_parse_schedule_setup_file(fake_filesystem_unittest.TestCase):
     def setUp(self):
       self.setUpPyfakefs()
       # set up variables
-      self.good_folder_path = '/test-good'
-      self.bad_folder_path = '/test-bad'
-      self.not_a_folder_path = '/test-notafolder'
       # Make file paths in fakefs
-      os.mkdir(self.good_folder_path)
-      os.mkdir(self.bad_folder_path)
+      os.mkdir(self.test_folder_path)
       # Add files in fakefs
-      for file in self.bad_folder_filename_list:
-        bad_folder_filepath = "{}/{}".format(self.bad_folder_path, file)
-        self.bad_folder_full_filepath_list.append(bad_folder_filepath)
-        open(bad_folder_filepath, 'a').close()
-      for file in self.good_folder_filename_list:
-        good_folder_filepath = "{}/{}".format(self.good_folder_path, file)
-        self.good_folder_full_filepath_list.append(good_folder_filepath)
-        open(good_folder_filepath, 'a').close()
+      # for file in self.bad_folder_filename_list:
+      #   bad_folder_filepath = "{}/{}".format(self.bad_folder_path, file)
+      #   self.bad_folder_full_filepath_list.append(bad_folder_filepath)
+      #   open(bad_folder_filepath, 'a').close()
+      # for file in self.good_folder_filename_list:
+      #   good_folder_filepath = "{}/{}".format(self.good_folder_path, file)
+      #   self.good_folder_full_filepath_list.append(good_folder_filepath)
+      #   open(good_folder_filepath, 'a').close()
 
     def test_opens_and_parses_correct_file(self):
         """Expected behavior: finds file with preset filename, opens and parses,
         returning object containing setup dicts and lists"""
-        pass
+        self.wb_setup_good.save(self.setup_filepath)
+        # self.assert? setup dicts and lists produced properly
+        setup_data = cycle_calendar_generator.parseScheduleSetup
+        self.assertIsInstance(setup_data, cycle_calendar_generator.SetupData)
 
     def test_raises_valueerror_if_invalid_path(self):
         """If input string is not a valid folder path, raise ValueError"""
@@ -138,7 +132,7 @@ class Test_parse_schedule_setup_file(fake_filesystem_unittest.TestCase):
             ValueError,
             'Not a valid folder', # TODO: use string constant from code
             cycle_calendar_generator.parseScheduleSetup,
-            self.not_a_folder_path
+            '/test-notafolder'
         )
 
     def test_raises_valueerror_if_no_setup_file(self):
@@ -147,36 +141,30 @@ class Test_parse_schedule_setup_file(fake_filesystem_unittest.TestCase):
             ValueError,
             'No schedule setup file found', # TODO: use string constant from code
             cycle_calendar_generator.parseScheduleSetup,
-            self.bad_folder_path
+            self.test_folder_path
         )
 
     def test_raises_valueerror_if_setup_file_not_excel(self):
       """If setup file isn't an Excel file, raise ValueError"""
       # test 1: just a text file
-      filepath = "{}/{}".format(
-        self.good_folder_path, cycle_calendar_generator.SCHEDULE_SETUP_FILENAME
-      )
-      with open(filepath) as file:
-        file.write(data_justATextDoc)
+      with open(self.setup_filepath, "x") as file:
+        file.write(self.data_justATextDoc)
       self.assertRaisesRegex(
         ValueError,
         'Not an Excel file',
         cycle_calendar_generator.parseScheduleSetup,
-        self.filepath
+        self.test_folder_path
       )
 
     def test_raises_valueerror_if_setup_file_unparseable(self):
       """If Excel file can't be parsed following preset format, raise ValueError"""
       # test 1: just a text file
-      filepath = "{}/{}".format(
-        self.good_folder_path, cycle_calendar_generator.SCHEDULE_SETUP_FILENAME
-      )
-      self.wb_setup_bad.save(filepath)
+      self.wb_setup_bad.save(self.setup_filepath)
       self.assertRaisesRegex(
         ValueError,
         'Setup file data does not match accepted format',
         cycle_calendar_generator.parseScheduleSetup,
-        self.filepath
+        self.test_folder_path
       )
 
 
