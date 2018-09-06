@@ -161,7 +161,9 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     """Expected behavior: finds file with preset filename, opens and parses,
     returning object containing setup dicts and lists"""
     # self.assert? setup dicts and lists produced properly
-    parsed_setup = cycle_calendar_generator.parseScheduleSetup(self.wb_setup_good)
+    parsed_setup = cycle_calendar_generator.parseScheduleSetup(
+      self.wb_setup_good
+    )
     self.assertIsInstance(parsed_setup, cycle_calendar_generator.SetupData)
     self.assertEqual(self.parsed_periodTiming, parsed_setup.periodTiming)
     self.assertEqual(self.parsed_cycleDaysList, parsed_setup.cycleDaysList)
@@ -226,7 +228,7 @@ class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
       self.teacher_filepath
     )
 
-class Test_parse_teacher_schedule_file(unittest.TestCase):
+class Test_parse_teacher_schedule(unittest.TestCase):
   ## Check that file's periodNumbers (in first column) match those in setup file
   ## Check that file's cycleDays (in first row) match those in setup file
   ## Iterate over cycleDay columns, generating list of objects; for each...
@@ -239,6 +241,58 @@ class Test_parse_teacher_schedule_file(unittest.TestCase):
   ### Iterate over periodNumbers, for each...
   #### Check if className exists for this periodNumber, skip this if not
   """Tests function to parse teacher schedule Workbook and make data object"""
+  data_teacherSchedule = [
+    ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
+    ["1", "", "", "", "", "", ""],
+    ["2", "", "", "", "", "", ""],
+    ["3", "", "", "", "", "", ""],
+    ["4", "", "", "", "", "", ""],
+    ["5", "", "", "", "", "", ""],
+  ]
+  parsed_teacherSchedule = {
+    "1": ("08:00 AM", "09:00 AM"),
+    "2": ("09:00 AM", "10:00 AM"),
+    "3": ("10:00 AM", "11:00 AM"),
+    "4": ("11:00 AM", "12:00 PM"),
+    "5": ("12:00 PM", "01:00 PM"),
+  }
+  data_badExcel = [
+    ["This", "isn't", "the", "right"],
+    ["data", "for", "the", "parser"]
+  ]
+  wb_schedule_good = openpyxl.Workbook()
+  sheetname_teacherSchedule = "Teacher Schedule"
+  ws_teacherSchedule = wb_schedule_good.create_sheet(sheetname_teacherSchedule)
+  for line in data_teacherSchedule:
+    ws_teacherSchedule.append(line)
+  wb_schedule_bad = openpyxl.Workbook()
+  ws_bad = wb_schedule_bad.active
+  for line in data_badExcel:
+    ws_bad.append(line)
+
+  def test_parses_correct_schedule(self):
+    """Expected behavior: finds file with preset filename, opens and parses,
+    returning object containing schedule dicts / lists"""
+    # self.assert? schedule dicts / lists produced properly
+    parsed_schedule = cycle_calendar_generator.parseTeacherSchedule(
+      self.wb_schedule_good
+    )
+    self.assertIsInstance(
+      parsed_schedule, cycle_calendar_generator.ScheduleData
+    )
+    self.assertEqual(
+      self.parsed_teacherSchedule, parsed_schedule.teacherSchedule
+    )
+
+  def test_raises_valueerror_if_schedule_unparseable(self):
+    """If Excel file can't be parsed following preset format, raise ValueError"""
+    # test 1: just a text file
+    self.assertRaisesRegex(
+      ValueError,
+      cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
+      cycle_calendar_generator.parseTeacherSchedule,
+      self.wb_schedule_bad
+    )
 
 class Test_generate_teacher_schedule_ical(unittest.TestCase):
   ## Create new iCal Calendar object
