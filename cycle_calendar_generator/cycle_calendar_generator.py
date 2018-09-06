@@ -97,6 +97,29 @@ def readTeacherScheduleFile(filepath):
         raise e
   return return_value
 
+def parseTeacherSchedule(workbook, setupData):
+  return_value = ScheduleData()
+  try:
+    # import pdb; pdb.set_trace()
+    ws_teacherSchedule = workbook['Teacher Schedule']
+    cols_teacherSchedule = tuple(ws_teacherSchedule.columns)
+    schedule_periodNumberCol = cols_teacherSchedule[0]
+    schedule_periodNumberCol = schedule_periodNumberCol[1:]
+    setup_periodTiming = setupData.periodTiming
+    for cell in schedule_periodNumberCol:
+      # import pdb; pdb.set_trace()
+      if not (cell.value in setup_periodTiming):
+        raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+  except Exception as e:
+    exception_type = str(type(e))
+    # import pdb; pdb.set_trace()
+    for case in switch(exception_type):
+      if case("<class 'KeyError'>"):
+        raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+      if case():
+        raise e
+  return return_value
+
 # Convenience objects/functions
 class SetupData:
   def __init__(self):
@@ -119,6 +142,15 @@ class SetupData:
       self.yearlySchedule[date] = cycleDay
     else:
       raise ValueError(ERROR_INVALID_SETUP_FILE)
+
+class ScheduleData():
+  def __init__(self):
+    self.teacherSchedule = {}
+    # for day in cycleDays:
+    #   scheduleData[day] = {}
+
+  # def updateDay(cycleDay, periodNumber, className):
+  #   pass
 
 class switch(object):
   def __init__(self, value):
