@@ -110,7 +110,15 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     ["4", "11:00 AM", "12:00 PM"],
     ["5", "12:00 PM", "01:00 PM"],
   ]
+  parsed_periodTiming = {
+    "1": ("08:00 AM", "09:00 AM"),
+    "2": ("09:00 AM", "10:00 AM"),
+    "3": ("10:00 AM", "11:00 AM"),
+    "4": ("11:00 AM", "12:00 PM"),
+    "5": ("12:00 PM", "01:00 PM"),
+  }
   data_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
+  parsed_cycleDaysList = data_cycleDaysList
   data_yearlySchedule = [
     ["August 31", data_cycleDaysList[0]],
     ["September 3", data_cycleDaysList[1]],
@@ -119,6 +127,14 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     ["September 6", data_cycleDaysList[4]],
     ["September 7", data_cycleDaysList[5]],
   ]
+  parsed_yearlySchedule = {
+    "August 31": data_cycleDaysList[0],
+    "September 3": data_cycleDaysList[1],
+    "September 4": data_cycleDaysList[2],
+    "September 5": data_cycleDaysList[3],
+    "September 6": data_cycleDaysList[4],
+    "September 7": data_cycleDaysList[5],
+  }
   data_badExcel = [
     ["This", "isn't", "the", "right"],
     ["data", "for", "the", "parser"]
@@ -144,8 +160,12 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     """Expected behavior: finds file with preset filename, opens and parses,
     returning object containing setup dicts and lists"""
     # self.assert? setup dicts and lists produced properly
-    setup_data = cycle_calendar_generator.parseScheduleSetup(self.wb_setup_good)
-    self.assertIsInstance(setup_data, cycle_calendar_generator.SetupData)
+    parsed_setup = cycle_calendar_generator.parseScheduleSetup(self.wb_setup_good)
+    self.assertIsInstance(parsed_setup, cycle_calendar_generator.SetupData)
+    self.assertEqual(self.parsed_periodTiming, parsed_setup.periodTiming)
+    self.assertEqual(self.parsed_cycleDaysList, parsed_setup.cycleDaysList)
+    self.assertEqual(self.parsed_yearlySchedule, parsed_setup.yearlySchedule)
+
 
   def test_raises_valueerror_if_setup_unparseable(self):
     """If Excel file can't be parsed following preset format, raise ValueError"""
