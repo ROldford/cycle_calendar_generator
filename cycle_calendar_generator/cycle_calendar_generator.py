@@ -53,30 +53,21 @@ def readScheduleSetupFile(folder):
     raise ValueError(ERROR_INVALID_FOLDER)
   return return_value
 
-# def parseScheduleSetup(workbook):
-#   return_value = SetupData()
-#   if (os.path.isdir(folder)):
-#     # try to find and open SCHEDULE_SETUP_FILENAME
-#     # if it doesn't exist, raise ValueError
-#     schedule_setup_filepath = "{}/{}".format(folder, SCHEDULE_SETUP_FILENAME)
-#     scanned_files = []
-#     try:
-#       with os.scandir(schedule_setup_filepath) as scanner:
-#         for entry in scanner:
-#           if entry.is_file:
-#             scanned_files.append(entry.name)
-#     except FileNotFoundError:
-#       raise ValueError('No schedule setup file found')
-#     if (SCHEDULE_SETUP_FILENAME in scanned_files):
-#       # open file and try parse
-#       return_value = 'is a real file'
-#     else:
-#       raise ValueError('No schedule setup file found')
-#       # TODO: string constant
-#   else:
-#     raise ValueError('Not a valid folder')
-#     # TODO: string constant
-#   return return_value
+def parseScheduleSetup(workbook):
+  return_value = SetupData()
+  try:
+    ws_periodTiming = workbook['Period Timing']
+    ws_cycleDaysList = workbook['Cycle Days List']
+    ws_yearlySchedule = workbook['Yearly Schedule']
+  except Exception as e:
+    exception_type = str(type(e))
+    for case in switch(exception_type):
+      if case("<class 'KeyError'>"):
+        raise ValueError(ERROR_INVALID_SETUP_FILE)
+        break
+      if case():
+        raise e
+  return return_value
 
 class SetupData:
   def __init__(self):
