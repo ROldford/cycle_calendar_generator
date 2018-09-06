@@ -55,6 +55,21 @@ def parseScheduleSetup(workbook):
     ws_periodTiming = workbook['Period Timing']
     ws_cycleDaysList = workbook['Cycle Days List']
     ws_yearlySchedule = workbook['Yearly Schedule']
+    rows_periodTiming = tuple(ws_periodTiming.rows)
+    rows_periodTiming = rows_periodTiming[1:]
+    for row in rows_periodTiming:
+      return_value.appendPeriod(row[0].value, row[1].value, row[2].value)
+    list_cycleDaysList = []
+    for row in ws_cycleDaysList.iter_rows(
+      max_row=1, max_col=ws_cycleDaysList.max_column
+    ):
+      for cell in row:
+        list_cycleDaysList.append(cell.value)
+    return_value.setCycleDays(list_cycleDaysList)
+    rows_yearlySchedule = tuple(ws_yearlySchedule.rows)
+    rows_yearlySchedule = rows_yearlySchedule[1:]
+    for row in rows_yearlySchedule:
+      return_value.appendScheduleDay(row[0].value, row[1].value)
   except Exception as e:
     exception_type = str(type(e))
     for case in switch(exception_type):
@@ -73,13 +88,20 @@ class SetupData:
     self.yearlySchedule = {}
 
   def appendPeriod(self, periodNumber, startTime, endTime):
-    pass
+    if periodNumber not in self.periodTiming:
+      self.periodTiming[periodNumber] = (startTime, endTime)
+    else:
+      raise ValueError(ERROR_INVALID_SETUP_FILE)
 
-  def appendCycleDay(self, cycleDay):
-    pass
+  def setCycleDays(self, cycleDays):
+    self.cycleDaysList.clear()
+    self.cycleDaysList = cycleDays
 
   def appendScheduleDay(self, date, cycleDay):
-    pass
+    if date not in self.yearlySchedule:
+      self.yearlySchedule[date] = cycleDay
+    else:
+      raise ValueError(ERROR_INVALID_SETUP_FILE)
 
 class switch(object):
   def __init__(self, value):
