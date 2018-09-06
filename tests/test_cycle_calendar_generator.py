@@ -94,74 +94,68 @@ class Test_read_schedule_setup_file(fake_filesystem_unittest.TestCase):
       self.test_folder_path
     )
 
-# class Test_parse_schedule_setup_file(unittest.TestCase):
-#   # Parse schedule setup workbook input (checking for valid data)
-#   # Parsing should generate:
-#   ## [dict]periodTiming -> [int]periodNumber: [tuple(Date, Date)](startTime, endTime)
-#   ## [list]CycleDaysList -> (str)cycleDay {showing all cycleDay strings}
-#   ## [dict]yearlySchedule -> [Date]date: [str]cycleDay
-#   """Tests function to parse schedule setup Excel file"""
-#   # Setting up good and bad Excel files
-#   data_periodTiming = [
-#     ["Period Number", "Start Time", "End Time"],
-#     ["1", "08:00 AM", "09:00 AM"],
-#     ["2", "09:00 AM", "10:00 AM"],
-#     ["3", "10:00 AM", "11:00 AM"],
-#     ["4", "11:00 AM", "12:00 PM"],
-#     ["5", "12:00 PM", "01:00 PM"],
-#   ]
-#   data_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
-#   data_yearlySchedule = [
-#     ["August 31", data_cycleDaysList[0]],
-#     ["September 3", data_cycleDaysList[1]],
-#     ["September 4", data_cycleDaysList[2]],
-#     ["September 5", data_cycleDaysList[3]],
-#     ["September 6", data_cycleDaysList[4]],
-#     ["September 7", data_cycleDaysList[5]],
-#   ]
-#   data_badExcel = [
-#     ["This", "isn't", "the", "right"],
-#     ["data", "for", "the", "parser"]
-#   ]
-#   wb_setup_good = openpyxl.Workbook()
-#   sheetname_periodTiming = "Period Timing"
-#   sheetname_cycleDaysList = "Cycle Days List"
-#   sheetname_yearlySchedule = "Yearly Schedule"
-#   ws_periodTiming = wb_setup_good.create_sheet(sheetname_periodTiming)
-#   ws_cycleDaysList = wb_setup_good.create_sheet(sheetname_cycleDaysList)
-#   ws_yearlySchedule = wb_setup_good.create_sheet(sheetname_yearlySchedule)
-#   for line in data_periodTiming:
-#     ws_periodTiming.append(line)
-#   ws_cycleDaysList.append(data_cycleDaysList)
-#   for line in data_yearlySchedule:
-#     ws_yearlySchedule.append(line)
-#   wb_setup_bad = openpyxl.Workbook()
-#   ws_bad = wb_setup_bad.active
-#   for line in data_badExcel:
-#     ws_bad.append(line)
-#
-#   def setUp(self):
-#     self.setUpPyfakefs()
-#     os.mkdir(self.test_folder_path)
-#
-#   def test_opens_and_parses_correct_file(self):
-#     """Expected behavior: finds file with preset filename, opens and parses,
-#     returning object containing setup dicts and lists"""
-#     self.wb_setup_good.save(self.setup_filepath)
-#     # self.assert? setup dicts and lists produced properly
-#     setup_data = cycle_calendar_generator.parseScheduleSetup(wb_setup_good)
-#     self.assertIsInstance(setup_data, cycle_calendar_generator.SetupData)
-#
-#   def test_raises_valueerror_if_setup_file_unparseable(self):
-#     """If Excel file can't be parsed following preset format, raise ValueError"""
-#     # test 1: just a text file
-#     self.wb_setup_bad.save(self.setup_filepath)
-#     self.assertRaisesRegex(
-#       ValueError,
-#       'Setup file data does not match accepted format',
-#       cycle_calendar_generator.parseScheduleSetup,
-#       self.test_folder_path
-#     )
+class Test_parse_schedule_setup_file(unittest.TestCase):
+  # Parse schedule setup workbook input (checking for valid data)
+  # Parsing should generate:
+  ## [dict]periodTiming -> [int]periodNumber: [tuple(Date, Date)](startTime, endTime)
+  ## [list]CycleDaysList -> (str)cycleDay {showing all cycleDay strings}
+  ## [dict]yearlySchedule -> [Date]date: [str]cycleDay
+  """Tests function to parse schedule setup Excel file"""
+  # Setting up good and bad Excel files
+  data_periodTiming = [
+    ["Period Number", "Start Time", "End Time"],
+    ["1", "08:00 AM", "09:00 AM"],
+    ["2", "09:00 AM", "10:00 AM"],
+    ["3", "10:00 AM", "11:00 AM"],
+    ["4", "11:00 AM", "12:00 PM"],
+    ["5", "12:00 PM", "01:00 PM"],
+  ]
+  data_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
+  data_yearlySchedule = [
+    ["August 31", data_cycleDaysList[0]],
+    ["September 3", data_cycleDaysList[1]],
+    ["September 4", data_cycleDaysList[2]],
+    ["September 5", data_cycleDaysList[3]],
+    ["September 6", data_cycleDaysList[4]],
+    ["September 7", data_cycleDaysList[5]],
+  ]
+  data_badExcel = [
+    ["This", "isn't", "the", "right"],
+    ["data", "for", "the", "parser"]
+  ]
+  wb_setup_good = openpyxl.Workbook()
+  sheetname_periodTiming = "Period Timing"
+  sheetname_cycleDaysList = "Cycle Days List"
+  sheetname_yearlySchedule = "Yearly Schedule"
+  ws_periodTiming = wb_setup_good.create_sheet(sheetname_periodTiming)
+  ws_cycleDaysList = wb_setup_good.create_sheet(sheetname_cycleDaysList)
+  ws_yearlySchedule = wb_setup_good.create_sheet(sheetname_yearlySchedule)
+  for line in data_periodTiming:
+    ws_periodTiming.append(line)
+  ws_cycleDaysList.append(data_cycleDaysList)
+  for line in data_yearlySchedule:
+    ws_yearlySchedule.append(line)
+  wb_setup_bad = openpyxl.Workbook()
+  ws_bad = wb_setup_bad.active
+  for line in data_badExcel:
+    ws_bad.append(line)
+
+  def test_parses_correct_setup(self):
+    """Expected behavior: finds file with preset filename, opens and parses,
+    returning object containing setup dicts and lists"""
+    # self.assert? setup dicts and lists produced properly
+    setup_data = cycle_calendar_generator.parseScheduleSetup(wb_setup_good)
+    self.assertIsInstance(setup_data, cycle_calendar_generator.SetupData)
+
+  def test_raises_valueerror_if_setup_unparseable(self):
+    """If Excel file can't be parsed following preset format, raise ValueError"""
+    # test 1: just a text file
+    self.assertRaisesRegex(
+      ValueError,
+      'Setup file data does not match accepted format',
+      cycle_calendar_generator.parseScheduleSetup,
+      self.wb_setup_bad
+    )
 
 
 
