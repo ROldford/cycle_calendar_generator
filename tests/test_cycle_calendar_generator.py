@@ -120,6 +120,7 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
   data_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
   parsed_cycleDaysList = data_cycleDaysList
   data_yearlySchedule = [
+    ["Date", "Cycle Day"],
     ["August 31", data_cycleDaysList[0]],
     ["September 3", data_cycleDaysList[1]],
     ["September 4", data_cycleDaysList[2]],
