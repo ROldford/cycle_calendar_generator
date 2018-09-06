@@ -81,6 +81,22 @@ def parseScheduleSetup(workbook):
         raise e
   return return_value
 
+def readTeacherScheduleFile(filepath):
+  return_value = None
+  try:
+    return_value = openpyxl.load_workbook(filepath)
+  except Exception as e:
+    exception_type = str(type(e))
+    for case in switch(exception_type):
+      if case("<class 'zipfile.BadZipFile'>"):
+        raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+        break
+      if case("<class 'FileNotFoundError'>"):
+        raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+      if case:
+        raise e
+  return return_value
+
 # Convenience objects/functions
 class SetupData:
   def __init__(self):
