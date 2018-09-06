@@ -236,11 +236,17 @@ class Test_parse_teacher_schedule(unittest.TestCase):
   #### [str]cycleDay
   #### [dict]schedule -> [int]periodNumber: [str]className
   ### Sort list by cycleDay property
-  ## Iterate over date:cycleDay dict, for each...
-  ### Find dailySchedule object matching cycleDay
-  ### Iterate over periodNumbers, for each...
-  #### Check if className exists for this periodNumber, skip this if not
   """Tests function to parse teacher schedule Workbook and make data object"""
+  setupData_periodTiming =[
+    ["1", "08:00 AM", "09:00 AM"],
+    ["2", "09:00 AM", "10:00 AM"],
+    ["3", "10:00 AM", "11:00 AM"],
+    ["4", "11:00 AM", "12:00 PM"],
+    ["5", "12:00 PM", "01:00 PM"],
+  ]
+  setupData = cycle_calendar_generator.SetupData()
+  for row in setupData_periodTiming:
+    setupData.appendPeriod(row[0], row[1], row[2])
   data_teacherSchedule = [
     ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
     ["1", "", "", "", "", "", ""],
@@ -275,7 +281,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     returning object containing schedule dicts / lists"""
     # self.assert? schedule dicts / lists produced properly
     parsed_schedule = cycle_calendar_generator.parseTeacherSchedule(
-      self.wb_schedule_good
+      self.wb_schedule_good, self.setupData
     )
     self.assertIsInstance(
       parsed_schedule, cycle_calendar_generator.ScheduleData
@@ -291,11 +297,15 @@ class Test_parse_teacher_schedule(unittest.TestCase):
       ValueError,
       cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
       cycle_calendar_generator.parseTeacherSchedule,
-      self.wb_schedule_bad
+      self.wb_schedule_bad, self.setupData
     )
 
 class Test_generate_teacher_schedule_ical(unittest.TestCase):
   ## Create new iCal Calendar object
+  ## Iterate over date:cycleDay dict, for each...
+  ### Find dailySchedule object matching cycleDay
+  ### Iterate over periodNumbers, for each...
+  #### Check if className exists for this periodNumber, skip this if not
   #### Generate iCal Event object
   ##### Name of event = className
   ##### Start date, end date = this date
