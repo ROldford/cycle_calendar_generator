@@ -144,7 +144,7 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     """Expected behavior: finds file with preset filename, opens and parses,
     returning object containing setup dicts and lists"""
     # self.assert? setup dicts and lists produced properly
-    setup_data = cycle_calendar_generator.parseScheduleSetup(wb_setup_good)
+    setup_data = cycle_calendar_generator.parseScheduleSetup(self.wb_setup_good)
     self.assertIsInstance(setup_data, cycle_calendar_generator.SetupData)
 
   def test_raises_valueerror_if_setup_unparseable(self):
