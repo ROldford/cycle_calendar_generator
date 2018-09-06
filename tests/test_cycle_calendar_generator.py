@@ -208,10 +208,9 @@ class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
     self.assertRaisesRegex(
         ValueError,
         cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
-        cycle_calendar_generator.readScheduleSetupFile,
+        cycle_calendar_generator.readTeacherScheduleFile,
         self.teacher_filepath_bad
     )
-
 
   def test_raises_valueerror_if_setup_file_not_excel(self):
     """If setup file isn't an Excel file, raise ValueError"""
@@ -223,7 +222,7 @@ class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
     self.assertRaisesRegex(
       ValueError,
       cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
-      cycle_calendar_generator.readScheduleSetupFile,
+      cycle_calendar_generator.readTeacherScheduleFile,
       self.teacher_filepath
     )
 
