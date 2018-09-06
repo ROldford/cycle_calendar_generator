@@ -152,7 +152,7 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     # test 1: just a text file
     self.assertRaisesRegex(
       ValueError,
-      'Setup file data does not match accepted format',
+      cycle_calendar_generator.ERROR_INVALID_SETUP_FILE,
       cycle_calendar_generator.parseScheduleSetup,
       self.wb_setup_bad
     )
