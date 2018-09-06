@@ -11,6 +11,7 @@ ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
 ERROR_INVALID_FOLDER = 'Not a valid folder'
 ERROR_INVALID_SETUP_FILE = 'Setup file does not follow proper format'
 ERROR_SETUP_FILE_NOT_EXCEL = 'Setup file is not a readable Excel file'
+ERROR_INVALID_SCHEDULE_FILE = 'Schedule file is not a readable Excel file'
 
 def getArgs():
   return_value = None
