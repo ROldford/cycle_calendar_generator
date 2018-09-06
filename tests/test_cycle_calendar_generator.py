@@ -178,31 +178,78 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
       self.wb_setup_bad
     )
 
+class Test_teacher_schedule_file_scanner(unittest.TestCase):
+  # Check for teacher schedule Excel files
+  # Iterate over teacher schedule files
+  """Tests function to scan through teacher schedule files and generate icals"""
+
+class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
+  ## Read teacher schedule file
+  ## Check if file is Excel file (exception check)
+  """Tests function to read teacher schedule file and generate Workbook"""
+  """Reading is assumed to work correctly"""
+  """Tests only check that exceptions are raised properly on bad input"""
+  test_folder_path = '/test-folder'
+  teacher_filename = 'FirstnameLastname.xlsx'
+  teacher_filepath = "{}/{}".format(
+    test_folder_path, teacher_filename
+  )
+  teacher_filepath_bad = "{}/{}".format(
+    'test-notafolder', teacher_filename
+  )
+  data_justATextDoc = "This isn't actually an Excel file."
+
+  def setUp(self):
+    self.setUpPyfakefs()
+    os.mkdir(self.test_folder_path)
+
+  def test_raises_valueerror_if_invalid_path(self):
+    """If input string is not a valid folder path, raise ValueError"""
+    self.assertRaisesRegex(
+        ValueError,
+        cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
+        cycle_calendar_generator.readScheduleSetupFile,
+        self.teacher_filepath_bad
+    )
 
 
-# Parsing should generate:
-## [dict]periodTiming -> [int]periodNumber: [tuple(Time, Time)](startTime, endTime)
-## [list]CycleDaysList -> (str)cycleDay {showing all cycleDay strings}
-## [dict]yearlySchedule -> [Date]date: [str]cycleDay
-# Check for teacher schedule Excel files
-# Iterate over teacher schedule files; for each...
-## Create new iCal Calendar object
-## Open teacher schedule file
-## Check if file is valid Excel file (exception check)
-## Check that file's periodNumbers (in first column) match those in setup file
-## Check that file's cycleDays (in first row) match those in setup file
-## Iterate over cycleDay columns, generating list of objects; for each...
-### Generate dailySchedule object, 2 properties:
-#### [str]cycleDay
-#### [dict]schedule -> [int]periodNumber: [str]className
-### Sort list by cycleDay property
-## Iterate over date:cycleDay dict, for each...
-### Find dailySchedule object matching cycleDay
-### Iterate over periodNumbers, for each...
-#### Check if className exists for this periodNumber, skip this if not
-#### Generate iCal Event object
-##### Name of event = className
-##### Start date, end date = this date
-##### Start time, end time = found by referencing periodTiming
-#### Append Event object to Calendar
-## Save Calendar, using filename from teacher schedule file
+  def test_raises_valueerror_if_setup_file_not_excel(self):
+    """If setup file isn't an Excel file, raise ValueError"""
+    # just a text file
+    self.assertTrue(os.path.exists(self.test_folder_path))
+    with open(self.teacher_filepath, "x") as file:
+      file.write(self.data_justATextDoc)
+    self.assertTrue(os.path.exists(self.teacher_filepath))
+    self.assertRaisesRegex(
+      ValueError,
+      cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
+      cycle_calendar_generator.readScheduleSetupFile,
+      self.teacher_filepath
+    )
+
+class Test_parse_teacher_schedule_file(unittest.TestCase):
+  ## Check that file's periodNumbers (in first column) match those in setup file
+  ## Check that file's cycleDays (in first row) match those in setup file
+  ## Iterate over cycleDay columns, generating list of objects; for each...
+  ### Generate dailySchedule object, 2 properties:
+  #### [str]cycleDay
+  #### [dict]schedule -> [int]periodNumber: [str]className
+  ### Sort list by cycleDay property
+  ## Iterate over date:cycleDay dict, for each...
+  ### Find dailySchedule object matching cycleDay
+  ### Iterate over periodNumbers, for each...
+  #### Check if className exists for this periodNumber, skip this if not
+  """Tests function to parse teacher schedule Workbook and make data object"""
+
+class Test_generate_teacher_schedule_ical(unittest.TestCase):
+  ## Create new iCal Calendar object
+  #### Generate iCal Event object
+  ##### Name of event = className
+  ##### Start date, end date = this date
+  ##### Start time, end time = found by referencing periodTiming
+  #### Append Event object to Calendar
+  """Tests function to use data object to make ical object"""
+
+class Test_save_teacher_schedule_ical(unittest.TestCase):
+  ## Save Calendar, using filename from teacher schedule file
+  """Tests function to save teacher schedule ical file"""
