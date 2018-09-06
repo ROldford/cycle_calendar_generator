@@ -2,11 +2,19 @@
 
 """Main module."""
 import argparse
-from os import getcwd
-from os import scandir
-from os import path
+import os
+# from os import os.getcwd
+# from os import os.scandir
+# from os import path
 
-SCHEDULE_SETUP_FILENAME = 'schedule_setup.xslx'
+import openpyxl
+
+SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
+
+ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
+ERROR_INVALID_FOLDER = 'Not a valid folder'
+ERROR_INVALID_SETUP_FILE = 'Setup file does not follow proper format'
+ERROR_SETUP_FILE_NOT_EXCEL = 'Setup file is not a readable Excel file'
 
 def getArgs():
   return_value = None
@@ -19,32 +27,88 @@ def getArgs():
   )
   parsed_args = parser.parse_args()
   if parsed_args.folder == None:
-    return_value = getcwd()
+    return_value = os.getcwd()
   else:
     return_value = parsed_args.folder
   return return_value
 
-def parseScheduleSetup(folder):
+def readScheduleSetupFile(folder):
   return_value = None
-  if (path.isdir(folder)):
-    # try to find and open SCHEDULE_SETUP_FILENAME
-    # if it doesn't exist, raise ValueError
+  if (os.path.isdir(folder)):
     schedule_setup_filepath = "{}/{}".format(folder, SCHEDULE_SETUP_FILENAME)
     scanned_files = []
     try:
-      with scandir(schedule_setup_filepath) as scanner:
-        for entry in scanner:
-          if entry.is_file:
-            scanned_files.append(entry.name)
-    except FileNotFoundError:
-      raise ValueError('No schedule setup file found')
-    if (SCHEDULE_SETUP_FILENAME in scanned_files):
-      # open file and try parse
-      return_value = 'is a real file'
-    else:
-      raise ValueError('No schedule setup file found')
-      # TODO: string constant
+      return_value = openpyxl.load_workbook(schedule_setup_filepath)
+    except Exception as e:
+      exception_type = str(type(e))
+      for case in switch(exception_type):
+        if case("<class 'zipfile.BadZipFile'>"):
+          raise ValueError(ERROR_SETUP_FILE_NOT_EXCEL)
+          break
+        if case("<class 'FileNotFoundError'>"):
+          raise ValueError(ERROR_MISSING_SETUP_FILE)
+        if case:
+          raise e
   else:
-    raise ValueError('Not a valid folder')
-    # TODO: string constant
+    raise ValueError(ERROR_INVALID_FOLDER)
   return return_value
+
+# def parseScheduleSetup(workbook):
+#   return_value = SetupData()
+#   if (os.path.isdir(folder)):
+#     # try to find and open SCHEDULE_SETUP_FILENAME
+#     # if it doesn't exist, raise ValueError
+#     schedule_setup_filepath = "{}/{}".format(folder, SCHEDULE_SETUP_FILENAME)
+#     scanned_files = []
+#     try:
+#       with os.scandir(schedule_setup_filepath) as scanner:
+#         for entry in scanner:
+#           if entry.is_file:
+#             scanned_files.append(entry.name)
+#     except FileNotFoundError:
+#       raise ValueError('No schedule setup file found')
+#     if (SCHEDULE_SETUP_FILENAME in scanned_files):
+#       # open file and try parse
+#       return_value = 'is a real file'
+#     else:
+#       raise ValueError('No schedule setup file found')
+#       # TODO: string constant
+#   else:
+#     raise ValueError('Not a valid folder')
+#     # TODO: string constant
+#   return return_value
+
+class SetupData:
+  def __init__(self):
+    self.periodTiming = {}
+    self.cycleDaysList = []
+    self.yearlySchedule = {}
+
+  def appendPeriod(self, periodNumber, startTime, endTime):
+    pass
+
+  def appendCycleDay(self, cycleDay):
+    pass
+
+  def appendScheduleDay(self, date, cycleDay):
+    pass
+
+class switch(object):
+  def __init__(self, value):
+    self.value = value
+    self.fall = False
+
+  def __iter__(self):
+    """Return the match method once, then stop"""
+    yield self.match
+    raise StopIteration
+
+  def match(self, *args):
+    """Indicate whether or not to enter a case suite"""
+    if self.fall or not args:
+      return True
+    elif self.value in args:
+      self.fall = True
+      return True
+    else:
+      return False
