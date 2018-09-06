@@ -3,10 +3,6 @@
 """Main module."""
 import argparse
 import os
-# from os import os.getcwd
-# from os import os.scandir
-# from os import path
-
 import openpyxl
 
 SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
@@ -69,6 +65,7 @@ def parseScheduleSetup(workbook):
         raise e
   return return_value
 
+# Convenience objects/functions
 class SetupData:
   def __init__(self):
     self.periodTiming = {}
