@@ -98,21 +98,24 @@ def readTeacherScheduleFile(filepath):
   return return_value
 
 def parseTeacherSchedule(workbook, setupData):
-  return_value = ScheduleData()
+  return_value = ScheduleData(setupData.periodList)
   try:
-    # import pdb; pdb.set_trace()
     ws_teacherSchedule = workbook['Teacher Schedule']
     cols_teacherSchedule = tuple(ws_teacherSchedule.columns)
+    # get period numbers
     schedule_periodNumberCol = cols_teacherSchedule[0]
     schedule_periodNumberCol = schedule_periodNumberCol[1:]
-    setup_periodTiming = setupData.periodTiming
+    setup_periodList = setupData.periodList
     for cell in schedule_periodNumberCol:
-      # import pdb; pdb.set_trace()
-      if not (cell.value in setup_periodTiming):
+      if not (cell.value in setup_periodList):
         raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+    # cycle through columns and add schedule days
+    schedule_dayCols = cols_teacherSchedule[1:]
+    for day in schedule_dayCols:
+      day_list = list(day)
+      return_value.addScheduleDay(day_list)
   except Exception as e:
     exception_type = str(type(e))
-    # import pdb; pdb.set_trace()
     for case in switch(exception_type):
       if case("<class 'KeyError'>"):
         raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
@@ -123,6 +126,7 @@ def parseTeacherSchedule(workbook, setupData):
 # Convenience objects/functions
 class SetupData:
   def __init__(self):
+    self.periodList = []
     self.periodTiming = {}
     self.cycleDaysList = []
     self.yearlySchedule = {}
@@ -130,6 +134,7 @@ class SetupData:
   def appendPeriod(self, periodNumber, startTime, endTime):
     if periodNumber not in self.periodTiming:
       self.periodTiming[periodNumber] = (startTime, endTime)
+      self.periodList.append(periodNumber)
     else:
       raise ValueError(ERROR_INVALID_SETUP_FILE)
 
@@ -143,14 +148,18 @@ class SetupData:
     else:
       raise ValueError(ERROR_INVALID_SETUP_FILE)
 
-class ScheduleData():
-  def __init__(self):
+class ScheduleData:
+  def __init__(self, periodList):
     self.teacherSchedule = {}
-    # for day in cycleDays:
-    #   scheduleData[day] = {}
+    self.periodList = periodList
 
-  # def updateDay(cycleDay, periodNumber, className):
-  #   pass
+  def addScheduleDay(self, schedule_list):
+    schedule_day_key = schedule_list[0]
+    schedule_periods_list = schedule_list[1:]
+    if len(schedule_periods_list) != len(self.periodList):
+      raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+    schedule_day = dict(zip(self.periodList, schedule_periods_list))
+    self.teacherSchedule[schedule_day_key] = schedule_day
 
 class switch(object):
   def __init__(self, value):
