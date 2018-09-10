@@ -324,7 +324,14 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     )
 
   def test_raises_valueerror_if_cycle_days_dont_match(self):
-    pass
+    schedule_sheet = self.wb_schedule_good["Teacher Schedule"]
+    schedule_sheet["G1"] = "G7"
+    self.assertRaisesRegex(
+      ValueError,
+      cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
+      cycle_calendar_generator.parseTeacherSchedule,
+      self.wb_schedule_good, self.setupData
+    )
 
 class Test_generate_teacher_schedule_ical(unittest.TestCase):
   ## Create new iCal Calendar object
