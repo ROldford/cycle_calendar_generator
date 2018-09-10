@@ -255,7 +255,9 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     ["4", "Grade 11", "", "Grade 8", "", "", "Grade 11"],
     ["5", "", "Grade 11", "", "Grade 8", "", ""],
   ]
-  parsed_teacherSchedule = cycle_calendar_generator.ScheduleData()
+  parsed_teacherSchedule = cycle_calendar_generator.ScheduleData(
+    ["1", "2", "3", "4", "5"]
+  )
   parsed_teacherSchedule.addScheduleDay(
     ["A1", "Grade 8", "", "Lunch", "Grade 11", ""]
   )
@@ -312,7 +314,14 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     )
 
   def test_raises_valueerror_if_period_numbers_dont_match(self):
-    pass
+    schedule_sheet = self.wb_schedule_good["Teacher Schedule"]
+    schedule_sheet["A6"] = "6"
+    self.assertRaisesRegex(
+      ValueError,
+      cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
+      cycle_calendar_generator.parseTeacherSchedule,
+      self.wb_schedule_good, self.setupData
+    )
 
   def test_raises_valueerror_if_cycle_days_dont_match(self):
     pass
