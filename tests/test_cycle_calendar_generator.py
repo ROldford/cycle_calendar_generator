@@ -249,19 +249,31 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     setupData.appendPeriod(row[0], row[1], row[2])
   data_teacherSchedule = [
     ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
-    ["1", "", "", "", "", "", ""],
-    ["2", "", "", "", "", "", ""],
-    ["3", "", "", "", "", "", ""],
-    ["4", "", "", "", "", "", ""],
-    ["5", "", "", "", "", "", ""],
+    ["1", "Grade 8", "", "", "Grade 11", "", "Grade 8"],
+    ["2", "", "Grade 8", "", "", "Grade 11", ""],
+    ["3", "Lunch", "Lunch", "Lunch", "Lunch", "Lunch", "Lunch"],
+    ["4", "Grade 11", "", "Grade 8", "", "", "Grade 11"],
+    ["5", "", "Grade 11", "", "Grade 8", "", ""],
   ]
-  parsed_teacherSchedule = {
-    "1": ("08:00 AM", "09:00 AM"),
-    "2": ("09:00 AM", "10:00 AM"),
-    "3": ("10:00 AM", "11:00 AM"),
-    "4": ("11:00 AM", "12:00 PM"),
-    "5": ("12:00 PM", "01:00 PM"),
-  }
+  parsed_teacherSchedule = cycle_calendar_generator.ScheduleData()
+  parsed_teacherSchedule.addScheduleDay(
+    "A1", ["Grade 8", "", "Lunch", "Grade 11", ""]
+  )
+  parsed_teacherSchedule.addScheduleDay(
+    "B2", ["", "Grade 8", "Lunch", "", "Grade 11"]
+  )
+  parsed_teacherSchedule.addScheduleDay(
+    "C3", ["", "", "Lunch", "Grade 8", ""]
+  )
+  parsed_teacherSchedule.addScheduleDay(
+    "D4", ["Grade 11", "", "Lunch", "", "Grade 8"]
+  )
+  parsed_teacherSchedule.addScheduleDay(
+    "E5", ["", "Grade 11", "Lunch", "", ""]
+  )
+  parsed_teacherSchedule.addScheduleDay(
+    "F6", ["Grade 8", "", "Lunch", "Grade 11", ""]
+  )
   data_badExcel = [
     ["This", "isn't", "the", "right"],
     ["data", "for", "the", "parser"]
@@ -292,13 +304,18 @@ class Test_parse_teacher_schedule(unittest.TestCase):
 
   def test_raises_valueerror_if_schedule_unparseable(self):
     """If Excel file can't be parsed following preset format, raise ValueError"""
-    # test 1: just a text file
     self.assertRaisesRegex(
       ValueError,
       cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
       cycle_calendar_generator.parseTeacherSchedule,
       self.wb_schedule_bad, self.setupData
     )
+
+  def test_raises_valueerror_if_period_numbers_dont_match(self):
+    pass
+
+  def test_raises_valueerror_if_cycle_days_dont_match(self):
+    pass
 
 class Test_generate_teacher_schedule_ical(unittest.TestCase):
   ## Create new iCal Calendar object
