@@ -257,22 +257,22 @@ class Test_parse_teacher_schedule(unittest.TestCase):
   ]
   parsed_teacherSchedule = cycle_calendar_generator.ScheduleData()
   parsed_teacherSchedule.addScheduleDay(
-    "A1", ["Grade 8", "", "Lunch", "Grade 11", ""]
+    ["A1", "Grade 8", "", "Lunch", "Grade 11", ""]
   )
   parsed_teacherSchedule.addScheduleDay(
-    "B2", ["", "Grade 8", "Lunch", "", "Grade 11"]
+    ["B2", "", "Grade 8", "Lunch", "", "Grade 11"]
   )
   parsed_teacherSchedule.addScheduleDay(
-    "C3", ["", "", "Lunch", "Grade 8", ""]
+    ["C3", "", "", "Lunch", "Grade 8", ""]
   )
   parsed_teacherSchedule.addScheduleDay(
-    "D4", ["Grade 11", "", "Lunch", "", "Grade 8"]
+    ["D4", "Grade 11", "", "Lunch", "", "Grade 8"]
   )
   parsed_teacherSchedule.addScheduleDay(
-    "E5", ["", "Grade 11", "Lunch", "", ""]
+    ["E5", "", "Grade 11", "Lunch", "", ""]
   )
   parsed_teacherSchedule.addScheduleDay(
-    "F6", ["Grade 8", "", "Lunch", "Grade 11", ""]
+    ["F6", "Grade 8", "", "Lunch", "Grade 11", ""]
   )
   data_badExcel = [
     ["This", "isn't", "the", "right"],
