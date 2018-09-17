@@ -13,6 +13,11 @@ ERROR_INVALID_SETUP_FILE = 'Setup file does not follow proper format'
 ERROR_SETUP_FILE_NOT_EXCEL = 'Setup file is not a readable Excel file'
 ERROR_INVALID_SCHEDULE_FILE = 'Schedule file is not a readable Excel file'
 
+SHEET_SETUP_PERIOD_TIMING = 'Period Timing'
+SHEET_SETUP_CYCLEDAYSLIST = 'Cycle Days List'
+SHEET_SETUP_YEARLYSCHEDULE = 'Yearly Schedule'
+SHEET_TEACHER_TEACHERSCHEDULE = 'Teacher Schedule'
+
 def getArgs():
   return_value = None
   parser = argparse.ArgumentParser(description='Input folder')
@@ -53,9 +58,9 @@ def readScheduleSetupFile(folder):
 def parseScheduleSetup(workbook):
   return_value = SetupData()
   try:
-    ws_periodTiming = workbook['Period Timing']
-    ws_cycleDaysList = workbook['Cycle Days List']
-    ws_yearlySchedule = workbook['Yearly Schedule']
+    ws_periodTiming = workbook[SHEET_SETUP_PERIOD_TIMING]
+    ws_cycleDaysList = workbook[SHEET_SETUP_CYCLEDAYSLIST]
+    ws_yearlySchedule = workbook[SHEET_SETUP_YEARLYSCHEDULE]
     rows_periodTiming = tuple(ws_periodTiming.rows)
     rows_periodTiming = rows_periodTiming[1:]
     for row in rows_periodTiming:
@@ -100,7 +105,7 @@ def readTeacherScheduleFile(filepath):
 def parseTeacherSchedule(workbook, setupData):
   return_value = ScheduleData(setupData.periodList)
   try:
-    ws_teacherSchedule = workbook['Teacher Schedule']
+    ws_teacherSchedule = workbook[SHEET_TEACHER_TEACHERSCHEDULE]
     cols_teacherSchedule = tuple(ws_teacherSchedule.columns)
     # get period numbers
     schedule_periodNumberCol = cols_teacherSchedule[0]
