@@ -244,9 +244,31 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     ["4", "11:00 AM", "12:00 PM"],
     ["5", "12:00 PM", "01:00 PM"],
   ]
-  setupData = cycle_calendar_generator.SetupData()
-  for row in setupData_periodTiming:
-    setupData.appendPeriod(row[0], row[1], row[2])
+  setupData_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
+  setupData_yearlySchedule = [
+    ["Date", "Cycle Day"],
+    ["August 31", setupData_cycleDaysList[0]],
+    ["September 3", setupData_cycleDaysList[1]],
+    ["September 4", setupData_cycleDaysList[2]],
+    ["September 5", setupData_cycleDaysList[3]],
+    ["September 6", setupData_cycleDaysList[4]],
+    ["September 7", setupData_cycleDaysList[5]],
+  ]
+  wb_setup = openpyxl.Workbook()
+  sheetname_periodTiming = "Period Timing"
+  sheetname_cycleDaysList = "Cycle Days List"
+  sheetname_yearlySchedule = "Yearly Schedule"
+  ws_periodTiming = wb_setup.create_sheet(sheetname_periodTiming)
+  ws_cycleDaysList = wb_setup.create_sheet(sheetname_cycleDaysList)
+  ws_yearlySchedule = wb_setup.create_sheet(sheetname_yearlySchedule)
+  for line in setupData_periodTiming:
+    ws_periodTiming.append(line)
+  ws_cycleDaysList.append(setupData_cycleDaysList)
+  for line in setupData_yearlySchedule:
+    ws_yearlySchedule.append(line)
+  setupData = cycle_calendar_generator.parseScheduleSetup(
+    wb_setup
+  )
   data_teacherSchedule = [
     ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
     ["1", "Grade 8", "", "", "Grade 11", "", "Grade 8"],
