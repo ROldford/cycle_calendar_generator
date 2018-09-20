@@ -117,8 +117,12 @@ def parseTeacherSchedule(workbook, setupData):
     # cycle through columns and add schedule days
     schedule_dayCols = cols_teacherSchedule[1:]
     for day in schedule_dayCols:
-      if day[0] in setupData.cycleDaysList:
-        day_list = list(day)
+      if day[0].value in setupData.cycleDaysList:
+        # turn list of cell objects to list of values
+        # TODO: refactor into cell_array_to_values_list function
+        day_list = []
+        for element in day:
+          day_list.append(element.value)
         return_value.addScheduleDay(day_list)
       else:
         raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
