@@ -238,6 +238,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
   ### Sort list by cycleDay property
   """Tests function to parse teacher schedule Workbook and make data object"""
   setupData_periodTiming =[
+    ["Period", "Start Time", "End Time"],
     ["1", "08:00 AM", "09:00 AM"],
     ["2", "09:00 AM", "10:00 AM"],
     ["3", "10:00 AM", "11:00 AM"],
@@ -323,7 +324,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
       parsed_schedule, cycle_calendar_generator.ScheduleData
     )
     self.assertEqual(
-      self.parsed_teacherSchedule, parsed_schedule.teacherSchedule
+      self.parsed_teacherSchedule.teacherSchedule, parsed_schedule.teacherSchedule
     )
 
   def test_raises_valueerror_if_schedule_unparseable(self):
