@@ -137,7 +137,7 @@ def parseTeacherSchedule(workbook, setupData):
   return return_value
 
 def generateTeacherScheduleCalendar(schedule, setupData):
-  return_value = None
+  return_value = Calendar()
   return return_value
 
 # Convenience objects/functions
