@@ -8,7 +8,6 @@ import unittest
 from unittest import mock
 import os
 import datetime
-import collections
 
 from pyfakefs import fake_filesystem_unittest
 import openpyxl
@@ -52,8 +51,6 @@ def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
   for line in yearlySchedule:
     ws_yearlySchedule.append(line)
   return return_value
-
-compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
 
 def make_setup_excel_good():
   good_periodTiming = [
