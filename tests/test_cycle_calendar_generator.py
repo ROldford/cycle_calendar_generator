@@ -439,7 +439,6 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
   def test_makes_correct_ical(self):
     """Expected behavior: given SetupData and ScheduleData"""
     """creates correct Calendar object"""
-    # TODO: Create correct Calendar object
     correct_calendar_data = [
       ["20180831 08:00:00", "20180831 09:00:00", "Grade 8"],
       ["20180831 10:00:00", "20180831 11:00:00", "Lunch"],
@@ -485,10 +484,150 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
       self.assertEqual(this_created_event.end, this_correct_event.end)
 
   def test_raises_valueerror_on_bad_yearly_schedule_cycle_day(self):
-    pass
+      bad_periodTiming = [
+        ["Period Number", "Start Time", "End Time"],
+        [
+          "1",
+          convert_timestring_to_day_fraction("08:00 AM"),
+          convert_timestring_to_day_fraction("09:00 AM")
+        ],
+        [
+          "2",
+          convert_timestring_to_day_fraction("09:00 AM"),
+          convert_timestring_to_day_fraction("10:00 AM")
+        ],
+        [
+          "3",
+          convert_timestring_to_day_fraction("10:00 AM"),
+          convert_timestring_to_day_fraction("11:00 AM")
+        ],
+        [
+          "4",
+          convert_timestring_to_day_fraction("11:00 AM"),
+          convert_timestring_to_day_fraction("12:00 PM")
+        ],
+        [
+          "5",
+          convert_timestring_to_day_fraction("12:00 PM"),
+          convert_timestring_to_day_fraction("01:00 PM")
+        ],
+      ]
+      bad_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
+      bad_yearlySchedule = [
+        ["Date", "Cycle Day"],
+        [
+          # Bad data here
+          convert_date_string_to_datetime("August 31, 2018"),
+          "G7"
+        ],
+        [
+          convert_date_string_to_datetime("September 3, 2018"),
+          bad_cycleDaysList[1]
+        ],
+        [
+          convert_date_string_to_datetime("September 4, 2018"),
+          bad_cycleDaysList[2]
+        ],
+        [
+          convert_date_string_to_datetime("September 5, 2018"),
+          bad_cycleDaysList[3]
+        ],
+        [
+          convert_date_string_to_datetime("September 6, 2018"),
+          bad_cycleDaysList[4]
+        ],
+        [
+          convert_date_string_to_datetime("September 7, 2018"),
+          bad_cycleDaysList[5]
+        ],
+      ]
+      bad_setup_excel = make_setup_excel(
+        bad_periodTiming,
+        bad_cycleDaysList,
+        bad_yearlySchedule
+      )
+      bad_setup_data = cycle_calendar_generator.parseScheduleSetup(
+        bad_setup_excel
+      )
+      self.assertRaisesRegex(
+        ValueError,
+        cycle_calendar_generator.ERROR_INVALID_SETUP_FILE,
+        cycle_calendar_generator.generateTeacherScheduleCalendar,
+        self.schedule_data_good, bad_setup_data
+      )
 
   def test_raises_valueerror_if_period_end_time_before_start_time(self):
-    pass
+      bad_periodTiming = [
+        ["Period Number", "Start Time", "End Time"],
+        [
+          # Reverse start and end times here
+          "1",
+          convert_timestring_to_day_fraction("09:00 AM"),
+          convert_timestring_to_day_fraction("08:00 AM")
+        ],
+        [
+          "2",
+          convert_timestring_to_day_fraction("09:00 AM"),
+          convert_timestring_to_day_fraction("10:00 AM")
+        ],
+        [
+          "3",
+          convert_timestring_to_day_fraction("10:00 AM"),
+          convert_timestring_to_day_fraction("11:00 AM")
+        ],
+        [
+          "4",
+          convert_timestring_to_day_fraction("11:00 AM"),
+          convert_timestring_to_day_fraction("12:00 PM")
+        ],
+        [
+          "5",
+          convert_timestring_to_day_fraction("12:00 PM"),
+          convert_timestring_to_day_fraction("01:00 PM")
+        ],
+      ]
+      bad_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
+      bad_yearlySchedule = [
+        ["Date", "Cycle Day"],
+        [
+          convert_date_string_to_datetime("August 31, 2018"),
+          bad_cycleDaysList[0]
+        ],
+        [
+          convert_date_string_to_datetime("September 3, 2018"),
+          bad_cycleDaysList[1]
+        ],
+        [
+          convert_date_string_to_datetime("September 4, 2018"),
+          bad_cycleDaysList[2]
+        ],
+        [
+          convert_date_string_to_datetime("September 5, 2018"),
+          bad_cycleDaysList[3]
+        ],
+        [
+          convert_date_string_to_datetime("September 6, 2018"),
+          bad_cycleDaysList[4]
+        ],
+        [
+          convert_date_string_to_datetime("September 7, 2018"),
+          bad_cycleDaysList[5]
+        ],
+      ]
+      bad_setup_excel = make_setup_excel(
+        bad_periodTiming,
+        bad_cycleDaysList,
+        bad_yearlySchedule
+      )
+      bad_setup_data = cycle_calendar_generator.parseScheduleSetup(
+        bad_setup_excel
+      )
+      self.assertRaisesRegex(
+        ValueError,
+        cycle_calendar_generator.ERROR_INVALID_SETUP_FILE,
+        cycle_calendar_generator.generateTeacherScheduleCalendar,
+        self.schedule_data_good, bad_setup_data
+      )
 
 class Test_save_teacher_schedule_ical(unittest.TestCase):
   ## Save Calendar, using filename from teacher schedule file
