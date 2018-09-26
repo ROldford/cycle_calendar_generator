@@ -356,8 +356,8 @@ class Test_parse_teacher_schedule(unittest.TestCase):
       self.wb_schedule_good, self.setupData
     )
 
-class Test_generate_teacher_schedule_ical(unittest.TestCase):
-  ## Create new iCal Calendar object
+class Test_generate_teacher_schedule_calendar(unittest.TestCase):
+  ## Given ScheduleData and SetupData objects, create new iCal Calendar object
   ## Iterate over date:cycleDay dict, for each...
   ### Find dailySchedule object matching cycleDay
   ### Iterate over periodNumbers, for each...
@@ -368,6 +368,25 @@ class Test_generate_teacher_schedule_ical(unittest.TestCase):
   ##### Start time, end time = found by referencing periodTiming
   #### Append Event object to Calendar
   """Tests function to use data object to make ical object"""
+
+  # TODO: Test input data
+  # SetupData
+  # ScheduleData
+
+  def test_makes_correct_ical(self):
+    """Expected behavior: given SetupData and ScheduleData"""
+    """creates correct Calendar object"""
+    # TODO: Create correct Calendar object
+    created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
+      self.setup_data_good, self.schedule_data_good
+    )
+    self.assertIsInstance(parsed_setup, cycle_calendar_generator.Calendar)
+
+  def test_raises_valueerror_on_bad_yearly_schedule_cycle_day(self):
+    pass
+
+  def test_raises_valueerror_if_period_end_time_before_start_time(self):
+    pass
 
 class Test_save_teacher_schedule_ical(unittest.TestCase):
   ## Save Calendar, using filename from teacher schedule file
