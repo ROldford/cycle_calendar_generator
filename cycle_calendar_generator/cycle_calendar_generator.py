@@ -3,6 +3,9 @@
 """Main module."""
 import argparse
 import os
+from datetime import timedelta, time, date
+from math import floor
+
 import openpyxl
 from ics import Calendar, Event
 
@@ -76,7 +79,7 @@ def parseScheduleSetup(workbook):
     rows_yearlySchedule = tuple(ws_yearlySchedule.rows)
     rows_yearlySchedule = rows_yearlySchedule[1:]
     for row in rows_yearlySchedule:
-      return_value.appendScheduleDay(row[0].value, row[1].value)
+      return_value.appendScheduleDay((row[0].value).date(), row[1].value)
   except Exception as e:
     exception_type = str(type(e))
     for case in switch(exception_type):
@@ -150,7 +153,9 @@ class SetupData:
 
   def appendPeriod(self, periodNumber, startTime, endTime):
     if periodNumber not in self.periodTiming:
-      self.periodTiming[periodNumber] = (startTime, endTime)
+      startTime_parsed = convert_day_fraction_to_time(startTime)
+      endTime_parsed = convert_day_fraction_to_time(endTime)
+      self.periodTiming[periodNumber] = (startTime_parsed, endTime_parsed)
       self.periodList.append(periodNumber)
     else:
       raise ValueError(ERROR_INVALID_SETUP_FILE)
@@ -159,9 +164,9 @@ class SetupData:
     self.cycleDaysList.clear()
     self.cycleDaysList = cycleDays
 
-  def appendScheduleDay(self, date, cycleDay):
-    if date not in self.yearlySchedule:
-      self.yearlySchedule[date] = cycleDay
+  def appendScheduleDay(self, calendar_date, cycleDay):
+    if calendar_date not in self.yearlySchedule:
+      self.yearlySchedule[calendar_date] = cycleDay
     else:
       raise ValueError(ERROR_INVALID_SETUP_FILE)
 
@@ -197,3 +202,8 @@ class switch(object):
       return True
     else:
       return False
+
+def convert_day_fraction_to_time(day_fraction):
+  secs_in_day = timedelta(days=1).total_seconds()
+  total_s = floor(day_fraction*secs_in_day)
+  return time(total_s//3600, (total_s%3600)//60)

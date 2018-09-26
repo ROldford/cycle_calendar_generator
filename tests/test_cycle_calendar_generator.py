@@ -8,20 +8,42 @@ import unittest
 from unittest import mock
 import os
 import datetime
+import arrow
 
 from pyfakefs import fake_filesystem_unittest
 import openpyxl
 
 from cycle_calendar_generator import cycle_calendar_generator
 
+def convert_time_to_day_fraction(hours, minutes):
+  input_time=datetime.datetime(1, 1, 1, hours, minutes)
+  timediff = input_time-datetime.datetime.min
+  secs_in_day=datetime.timedelta(days=1).total_seconds()
+  return timediff.total_seconds()/secs_in_day
+
+def convert_date_string_to_datetime(datestring):
+  parsed_datestring = arrow.get(datestring, "MMMM D YYYY")
+  return parsed_datestring.datetime
+
+def convert_timestring_to_time(timestring):
+  parsed_timestring = datetime.datetime.strptime(timestring, "%I:%M %p")
+  return parsed_timestring.time()
+
+def convert_timestring_to_day_fraction(timestring):
+  parsed_time = convert_timestring_to_time(timestring)
+  return convert_time_to_day_fraction(parsed_time.hour, parsed_time.minute)
+
 def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
   return_value = openpyxl.Workbook()
-  sheetname_periodTiming = "Period Timing"
-  sheetname_cycleDaysList = "Cycle Days List"
-  sheetname_yearlySchedule = "Yearly Schedule"
-  ws_periodTiming = return_value.create_sheet(sheetname_periodTiming)
-  ws_cycleDaysList = return_value.create_sheet(sheetname_cycleDaysList)
-  ws_yearlySchedule = return_value.create_sheet(sheetname_yearlySchedule)
+  ws_periodTiming = return_value.create_sheet(
+    cycle_calendar_generator.SHEET_SETUP_PERIOD_TIMING
+  )
+  ws_cycleDaysList = return_value.create_sheet(
+    cycle_calendar_generator.SHEET_SETUP_CYCLEDAYSLIST
+  )
+  ws_yearlySchedule = return_value.create_sheet(
+    cycle_calendar_generator.SHEET_SETUP_YEARLYSCHEDULE
+  )
   for line in periodTiming:
     ws_periodTiming.append(line)
   ws_cycleDaysList.append(cycleDaysList)
@@ -32,22 +54,61 @@ def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
 def make_setup_excel_good():
   good_periodTiming = [
     ["Period Number", "Start Time", "End Time"],
-    ["1", "08:00 AM", "09:00 AM"],
-    ["2", "09:00 AM", "10:00 AM"],
-    ["3", "10:00 AM", "11:00 AM"],
-    ["4", "11:00 AM", "12:00 PM"],
-    ["5", "12:00 PM", "01:00 PM"],
+    [
+      "1",
+      convert_timestring_to_day_fraction("08:00 AM"),
+      convert_timestring_to_day_fraction("09:00 AM")
+    ],
+    [
+      "2",
+      convert_timestring_to_day_fraction("09:00 AM"),
+      convert_timestring_to_day_fraction("10:00 AM")
+    ],
+    [
+      "3",
+      convert_timestring_to_day_fraction("10:00 AM"),
+      convert_timestring_to_day_fraction("11:00 AM")
+    ],
+    [
+      "4",
+      convert_timestring_to_day_fraction("11:00 AM"),
+      convert_timestring_to_day_fraction("12:00 PM")
+    ],
+    [
+      "5",
+      convert_timestring_to_day_fraction("12:00 PM"),
+      convert_timestring_to_day_fraction("01:00 PM")
+    ],
   ]
   good_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
   good_yearlySchedule = [
     ["Date", "Cycle Day"],
-    ["August 31", good_cycleDaysList[0]],
-    ["September 3", good_cycleDaysList[1]],
-    ["September 4", good_cycleDaysList[2]],
-    ["September 5", good_cycleDaysList[3]],
-    ["September 6", good_cycleDaysList[4]],
-    ["September 7", good_cycleDaysList[5]],
+    [
+      convert_date_string_to_datetime("August 31, 2018"),
+      good_cycleDaysList[0]
+    ],
+    [
+      convert_date_string_to_datetime("September 3, 2018"),
+      good_cycleDaysList[1]
+    ],
+    [
+      convert_date_string_to_datetime("September 4, 2018"),
+      good_cycleDaysList[2]
+    ],
+    [
+      convert_date_string_to_datetime("September 5, 2018"),
+      good_cycleDaysList[3]
+    ],
+    [
+      convert_date_string_to_datetime("September 6, 2018"),
+      good_cycleDaysList[4]
+    ],
+    [
+      convert_date_string_to_datetime("September 7, 2018"),
+      good_cycleDaysList[5]
+    ],
   ]
+
   return make_setup_excel(
     good_periodTiming,
     good_cycleDaysList,
@@ -142,20 +203,20 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
   """Tests function to parse schedule setup Excel file"""
   # Setting up good and bad Excel files
   parsed_periodTiming = {
-    "1": ("08:00 AM", "09:00 AM"),
-    "2": ("09:00 AM", "10:00 AM"),
-    "3": ("10:00 AM", "11:00 AM"),
-    "4": ("11:00 AM", "12:00 PM"),
-    "5": ("12:00 PM", "01:00 PM"),
+    "1": (datetime.time(8, 0), datetime.time(9, 0)),
+    "2": (datetime.time(9, 0), datetime.time(10, 0)),
+    "3": (datetime.time(10, 0), datetime.time(11, 0)),
+    "4": (datetime.time(11, 0), datetime.time(12, 0)),
+    "5": (datetime.time(12, 0), datetime.time(13, 0)),
   }
   parsed_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
   parsed_yearlySchedule = {
-    "August 31": parsed_cycleDaysList[0],
-    "September 3": parsed_cycleDaysList[1],
-    "September 4": parsed_cycleDaysList[2],
-    "September 5": parsed_cycleDaysList[3],
-    "September 6": parsed_cycleDaysList[4],
-    "September 7": parsed_cycleDaysList[5],
+    datetime.date(2018, 8, 31): parsed_cycleDaysList[0],
+    datetime.date(2018, 9, 3): parsed_cycleDaysList[1],
+    datetime.date(2018, 9, 4): parsed_cycleDaysList[2],
+    datetime.date(2018, 9, 5): parsed_cycleDaysList[3],
+    datetime.date(2018, 9, 6): parsed_cycleDaysList[4],
+    datetime.date(2018, 9, 7): parsed_cycleDaysList[5],
   }
   data_badExcel = [
     ["This", "isn't", "the", "right"],
@@ -350,7 +411,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
   #### Append Event object to Calendar
   """Tests function to use data object to make ical object"""
 
-  # TODO: Test input data
+  # Test input data
   # SetupData
   wb_setup = make_setup_excel_good()
   setup_data = cycle_calendar_generator.parseScheduleSetup(
@@ -378,6 +439,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
     """Expected behavior: given SetupData and ScheduleData"""
     """creates correct Calendar object"""
     # TODO: Create correct Calendar object
+
     created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
       self.setup_data, self.schedule_data_good
     )
