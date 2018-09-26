@@ -14,6 +14,45 @@ import openpyxl
 
 from cycle_calendar_generator import cycle_calendar_generator
 
+def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
+  return_value = openpyxl.Workbook()
+  sheetname_periodTiming = "Period Timing"
+  sheetname_cycleDaysList = "Cycle Days List"
+  sheetname_yearlySchedule = "Yearly Schedule"
+  ws_periodTiming = return_value.create_sheet(sheetname_periodTiming)
+  ws_cycleDaysList = return_value.create_sheet(sheetname_cycleDaysList)
+  ws_yearlySchedule = return_value.create_sheet(sheetname_yearlySchedule)
+  for line in periodTiming:
+    ws_periodTiming.append(line)
+  ws_cycleDaysList.append(cycleDaysList)
+  for line in yearlySchedule:
+    ws_yearlySchedule.append(line)
+  return return_value
+
+def make_setup_excel_good():
+  good_periodTiming = [
+    ["Period Number", "Start Time", "End Time"],
+    ["1", "08:00 AM", "09:00 AM"],
+    ["2", "09:00 AM", "10:00 AM"],
+    ["3", "10:00 AM", "11:00 AM"],
+    ["4", "11:00 AM", "12:00 PM"],
+    ["5", "12:00 PM", "01:00 PM"],
+  ]
+  good_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
+  good_yearlySchedule = [
+    ["Date", "Cycle Day"],
+    ["August 31", good_cycleDaysList[0]],
+    ["September 3", good_cycleDaysList[1]],
+    ["September 4", good_cycleDaysList[2]],
+    ["September 5", good_cycleDaysList[3]],
+    ["September 6", good_cycleDaysList[4]],
+    ["September 7", good_cycleDaysList[5]],
+  ]
+  return make_setup_excel(
+    good_periodTiming,
+    good_cycleDaysList,
+    good_yearlySchedule
+  )
 
 class Test_get_args(unittest.TestCase):
   # Get directory from args
@@ -102,14 +141,6 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
   ## [dict]yearlySchedule -> [Date]date: [str]cycleDay
   """Tests function to parse schedule setup Excel file"""
   # Setting up good and bad Excel files
-  data_periodTiming = [
-    ["Period Number", "Start Time", "End Time"],
-    ["1", "08:00 AM", "09:00 AM"],
-    ["2", "09:00 AM", "10:00 AM"],
-    ["3", "10:00 AM", "11:00 AM"],
-    ["4", "11:00 AM", "12:00 PM"],
-    ["5", "12:00 PM", "01:00 PM"],
-  ]
   parsed_periodTiming = {
     "1": ("08:00 AM", "09:00 AM"),
     "2": ("09:00 AM", "10:00 AM"),
@@ -117,41 +148,20 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
     "4": ("11:00 AM", "12:00 PM"),
     "5": ("12:00 PM", "01:00 PM"),
   }
-  data_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
-  parsed_cycleDaysList = data_cycleDaysList
-  data_yearlySchedule = [
-    ["Date", "Cycle Day"],
-    ["August 31", data_cycleDaysList[0]],
-    ["September 3", data_cycleDaysList[1]],
-    ["September 4", data_cycleDaysList[2]],
-    ["September 5", data_cycleDaysList[3]],
-    ["September 6", data_cycleDaysList[4]],
-    ["September 7", data_cycleDaysList[5]],
-  ]
+  parsed_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
   parsed_yearlySchedule = {
-    "August 31": data_cycleDaysList[0],
-    "September 3": data_cycleDaysList[1],
-    "September 4": data_cycleDaysList[2],
-    "September 5": data_cycleDaysList[3],
-    "September 6": data_cycleDaysList[4],
-    "September 7": data_cycleDaysList[5],
+    "August 31": parsed_cycleDaysList[0],
+    "September 3": parsed_cycleDaysList[1],
+    "September 4": parsed_cycleDaysList[2],
+    "September 5": parsed_cycleDaysList[3],
+    "September 6": parsed_cycleDaysList[4],
+    "September 7": parsed_cycleDaysList[5],
   }
   data_badExcel = [
     ["This", "isn't", "the", "right"],
     ["data", "for", "the", "parser"]
   ]
-  wb_setup_good = openpyxl.Workbook()
-  sheetname_periodTiming = "Period Timing"
-  sheetname_cycleDaysList = "Cycle Days List"
-  sheetname_yearlySchedule = "Yearly Schedule"
-  ws_periodTiming = wb_setup_good.create_sheet(sheetname_periodTiming)
-  ws_cycleDaysList = wb_setup_good.create_sheet(sheetname_cycleDaysList)
-  ws_yearlySchedule = wb_setup_good.create_sheet(sheetname_yearlySchedule)
-  for line in data_periodTiming:
-    ws_periodTiming.append(line)
-  ws_cycleDaysList.append(data_cycleDaysList)
-  for line in data_yearlySchedule:
-    ws_yearlySchedule.append(line)
+  wb_setup_good = make_setup_excel_good()
   wb_setup_bad = openpyxl.Workbook()
   ws_bad = wb_setup_bad.active
   for line in data_badExcel:
@@ -237,36 +247,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
   #### [dict]schedule -> [int]periodNumber: [str]className
   ### Sort list by cycleDay property
   """Tests function to parse teacher schedule Workbook and make data object"""
-  setupData_periodTiming =[
-    ["Period", "Start Time", "End Time"],
-    ["1", "08:00 AM", "09:00 AM"],
-    ["2", "09:00 AM", "10:00 AM"],
-    ["3", "10:00 AM", "11:00 AM"],
-    ["4", "11:00 AM", "12:00 PM"],
-    ["5", "12:00 PM", "01:00 PM"],
-  ]
-  setupData_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
-  setupData_yearlySchedule = [
-    ["Date", "Cycle Day"],
-    ["August 31", setupData_cycleDaysList[0]],
-    ["September 3", setupData_cycleDaysList[1]],
-    ["September 4", setupData_cycleDaysList[2]],
-    ["September 5", setupData_cycleDaysList[3]],
-    ["September 6", setupData_cycleDaysList[4]],
-    ["September 7", setupData_cycleDaysList[5]],
-  ]
-  wb_setup = openpyxl.Workbook()
-  sheetname_periodTiming = "Period Timing"
-  sheetname_cycleDaysList = "Cycle Days List"
-  sheetname_yearlySchedule = "Yearly Schedule"
-  ws_periodTiming = wb_setup.create_sheet(sheetname_periodTiming)
-  ws_cycleDaysList = wb_setup.create_sheet(sheetname_cycleDaysList)
-  ws_yearlySchedule = wb_setup.create_sheet(sheetname_yearlySchedule)
-  for line in setupData_periodTiming:
-    ws_periodTiming.append(line)
-  ws_cycleDaysList.append(setupData_cycleDaysList)
-  for line in setupData_yearlySchedule:
-    ws_yearlySchedule.append(line)
+  wb_setup = make_setup_excel_good()
   setupData = cycle_calendar_generator.parseScheduleSetup(
     wb_setup
   )
@@ -371,6 +352,10 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
 
   # TODO: Test input data
   # SetupData
+  wb_setup = make_setup_excel_good()
+  setupData = cycle_calendar_generator.parseScheduleSetup(
+    wb_setup
+  )
   # ScheduleData
 
   def test_makes_correct_ical(self):
@@ -378,7 +363,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
     """creates correct Calendar object"""
     # TODO: Create correct Calendar object
     created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
-      self.setup_data_good, self.schedule_data_good
+      self.setup_data, self.schedule_data_good
     )
     self.assertIsInstance(parsed_setup, cycle_calendar_generator.Calendar)
 
