@@ -8,11 +8,12 @@ import unittest
 from unittest import mock
 import os
 import datetime
-import arrow
+import collections
 
 from pyfakefs import fake_filesystem_unittest
 import openpyxl
 from ics import Calendar, Event
+import arrow
 
 from cycle_calendar_generator import cycle_calendar_generator
 
@@ -51,6 +52,8 @@ def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
   for line in yearlySchedule:
     ws_yearlySchedule.append(line)
   return return_value
+
+compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
 
 def make_setup_excel_good():
   good_periodTiming = [
@@ -469,10 +472,20 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
       e.name = name
       correct_calendar.events.add(e)
     created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
-      self.setup_data, self.schedule_data_good
+      self.schedule_data_good, self.setup_data
     )
     self.assertIsInstance(created_calendar, cycle_calendar_generator.Calendar)
-    self.assertEqual(created_calendar, correct_calendar)
+    created_calendar_count = len(created_calendar.events)
+    correct_calendar_count = len(correct_calendar.events)
+    self.assertEqual(created_calendar_count, correct_calendar_count)
+    sorted_created_events = sorted(created_calendar.events)
+    sorted_correct_events = sorted(correct_calendar.events)
+    for i in range(created_calendar_count):
+      this_created_event = sorted_created_events[i]
+      this_correct_event = sorted_correct_events[i]
+      self.assertEqual(this_created_event.name, this_correct_event.name)
+      self.assertEqual(this_created_event.begin, this_correct_event.begin)
+      self.assertEqual(this_created_event.end, this_correct_event.end)
 
   def test_raises_valueerror_on_bad_yearly_schedule_cycle_day(self):
     pass
