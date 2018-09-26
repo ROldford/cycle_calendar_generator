@@ -12,6 +12,7 @@ import arrow
 
 from pyfakefs import fake_filesystem_unittest
 import openpyxl
+from ics import Calendar, Event
 
 from cycle_calendar_generator import cycle_calendar_generator
 
@@ -439,11 +440,39 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
     """Expected behavior: given SetupData and ScheduleData"""
     """creates correct Calendar object"""
     # TODO: Create correct Calendar object
-
+    correct_calendar_data = [
+      ["20180831 08:00:00", "20180831 09:00:00", "Grade 8"],
+      ["20180831 10:00:00", "20180831 11:00:00", "Lunch"],
+      ["20180831 11:00:00", "20180831 12:00:00", "Grade 11"],
+      ["20180903 09:00:00", "20180903 10:00:00", "Grade 8"],
+      ["20180903 10:00:00", "20180903 11:00:00", "Lunch"],
+      ["20180903 12:00:00", "20180903 13:00:00", "Grade 11"],
+      ["20180904 10:00:00", "20180904 11:00:00", "Lunch"],
+      ["20180904 11:00:00", "20180904 12:00:00", "Grade 8"],
+      ["20180905 08:00:00", "20180905 09:00:00", "Grade 11"],
+      ["20180905 10:00:00", "20180905 11:00:00", "Lunch"],
+      ["20180905 12:00:00", "20180905 13:00:00", "Grade 8"],
+      ["20180906 09:00:00", "20180906 10:00:00", "Grade 11"],
+      ["20180906 10:00:00", "20180906 11:00:00", "Lunch"],
+      ["20180907 08:00:00", "20180907 09:00:00", "Grade 8"],
+      ["20180907 10:00:00", "20180907 11:00:00", "Lunch"],
+      ["20180907 11:00:00", "20180907 12:00:00", "Grade 11"],
+    ]
+    correct_calendar = Calendar()
+    for line in correct_calendar_data:
+      e = Event()
+      begin, end, name = line
+      begin = arrow.get(begin, "YYYYMMDD HH:mm:ss")
+      end = arrow.get(end, "YYYYMMDD HH:mm:ss")
+      e.begin = begin
+      e.end = end
+      e.name = name
+      correct_calendar.events.add(e)
     created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
       self.setup_data, self.schedule_data_good
     )
     self.assertIsInstance(created_calendar, cycle_calendar_generator.Calendar)
+    self.assertEqual(created_calendar, correct_calendar)
 
   def test_raises_valueerror_on_bad_yearly_schedule_cycle_day(self):
     pass
