@@ -3,7 +3,7 @@
 """Main module."""
 import argparse
 import os
-from datetime import timedelta, time, date
+from datetime import timedelta, time, date, datetime
 from math import floor
 
 import openpyxl
@@ -141,6 +141,28 @@ def parseTeacherSchedule(workbook, setupData):
 
 def generateTeacherScheduleCalendar(schedule, setupData):
   return_value = Calendar()
+  # For each day in the yearly schedule
+  # import pdb; pdb.set_trace()
+  # Get the date and schedule day
+  for date_key in setupData.yearlySchedule:
+    # Look up teacher's schedule for that schedule day
+    schedule_day = setupData.yearlySchedule[date_key]
+    todays_schedule = schedule.teacherSchedule[schedule_day]
+    # For each entry in that schedule
+    for period_number in todays_schedule:
+      period_name = todays_schedule[period_number]
+      # Look up the start and end times matching the period number
+      if period_name:
+        timing = setupData.periodTiming[period_number]
+        start = datetime.combine(date_key, timing[0])
+        end = datetime.combine(date_key, timing[1])
+        # Use start time, end time and schedule text to make Event
+        e = Event()
+        e.begin = start
+        e.end = end
+        e.name = period_name
+        # Add to calendar
+        return_value.events.add(e)
   return return_value
 
 # Convenience objects/functions
