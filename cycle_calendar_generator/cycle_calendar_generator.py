@@ -4,6 +4,7 @@
 import argparse
 import os
 import openpyxl
+from ics import Calendar, Event
 
 SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
 
@@ -133,6 +134,10 @@ def parseTeacherSchedule(workbook, setupData):
         raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
       if case():
         raise e
+  return return_value
+
+def generateTeacherScheduleCalendar(schedule, setupData):
+  return_value = None
   return return_value
 
 # Convenience objects/functions

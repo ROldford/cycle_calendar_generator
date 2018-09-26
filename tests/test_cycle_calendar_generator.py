@@ -285,7 +285,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     ["data", "for", "the", "parser"]
   ]
   wb_schedule_good = openpyxl.Workbook()
-  sheetname_teacherSchedule = "Teacher Schedule"
+  sheetname_teacherSchedule = cycle_calendar_generator.SHEET_TEACHER_TEACHERSCHEDULE
   ws_teacherSchedule = wb_schedule_good.create_sheet(sheetname_teacherSchedule)
   for line in data_teacherSchedule:
     ws_teacherSchedule.append(line)
@@ -353,10 +353,26 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
   # TODO: Test input data
   # SetupData
   wb_setup = make_setup_excel_good()
-  setupData = cycle_calendar_generator.parseScheduleSetup(
+  setup_data = cycle_calendar_generator.parseScheduleSetup(
     wb_setup
   )
   # ScheduleData
+  data_teacherSchedule = [
+    ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
+    ["1", "Grade 8", "", "", "Grade 11", "", "Grade 8"],
+    ["2", "", "Grade 8", "", "", "Grade 11", ""],
+    ["3", "Lunch", "Lunch", "Lunch", "Lunch", "Lunch", "Lunch"],
+    ["4", "Grade 11", "", "Grade 8", "", "", "Grade 11"],
+    ["5", "", "Grade 11", "", "Grade 8", "", ""],
+  ]
+  wb_schedule_good = openpyxl.Workbook()
+  sheetname_teacherSchedule = cycle_calendar_generator.SHEET_TEACHER_TEACHERSCHEDULE
+  ws_teacherSchedule = wb_schedule_good.create_sheet(sheetname_teacherSchedule)
+  for line in data_teacherSchedule:
+    ws_teacherSchedule.append(line)
+  schedule_data_good = cycle_calendar_generator.parseTeacherSchedule(
+    wb_schedule_good, setup_data
+  )
 
   def test_makes_correct_ical(self):
     """Expected behavior: given SetupData and ScheduleData"""
@@ -365,7 +381,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
     created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
       self.setup_data, self.schedule_data_good
     )
-    self.assertIsInstance(parsed_setup, cycle_calendar_generator.Calendar)
+    self.assertIsInstance(created_calendar, cycle_calendar_generator.Calendar)
 
   def test_raises_valueerror_on_bad_yearly_schedule_cycle_day(self):
     pass
