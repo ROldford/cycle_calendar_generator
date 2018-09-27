@@ -179,7 +179,10 @@ def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
   # Check if folder exists
   try:
     if (os.path.exists(folder_path)):
-      pass
+      teacher_filepath = "{}/{}.ics".format(folder_path, teacher_name)
+      with open(teacher_filepath, 'w') as f:
+        f.writelines(teacher_calendar)
+      return_value = True
     else:
       raise ValueError(ERROR_INVALID_FOLDER)
   except Exception as e:
