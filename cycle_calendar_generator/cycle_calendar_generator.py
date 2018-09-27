@@ -174,6 +174,21 @@ def generateTeacherScheduleCalendar(schedule, setupData):
         raise e
   return return_value
 
+def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
+  return_value = False
+  # Check if folder exists
+  try:
+    if (os.path.exists(folder_path)):
+      pass
+    else:
+      raise ValueError(ERROR_INVALID_FOLDER)
+  except Exception as e:
+    exception_type = str(type(e))
+    for case in switch(exception_type):
+      if case():
+        raise e
+  return return_value
+
 # Convenience objects/functions
 class SetupData:
   def __init__(self):
