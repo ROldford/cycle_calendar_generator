@@ -637,20 +637,50 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
   test_folder_path = "/test-folder"
   output_folder_path = "/test-folder/output"
   teacher_name = "Test Teacher"
+  teacher_calendar_data = [
+    ["20180831 08:00:00", "20180831 09:00:00", "Grade 8"],
+    ["20180831 10:00:00", "20180831 11:00:00", "Lunch"],
+    ["20180831 11:00:00", "20180831 12:00:00", "Grade 11"],
+    ["20180903 09:00:00", "20180903 10:00:00", "Grade 8"],
+    ["20180903 10:00:00", "20180903 11:00:00", "Lunch"],
+    ["20180903 12:00:00", "20180903 13:00:00", "Grade 11"],
+    ["20180904 10:00:00", "20180904 11:00:00", "Lunch"],
+    ["20180904 11:00:00", "20180904 12:00:00", "Grade 8"],
+    ["20180905 08:00:00", "20180905 09:00:00", "Grade 11"],
+    ["20180905 10:00:00", "20180905 11:00:00", "Lunch"],
+    ["20180905 12:00:00", "20180905 13:00:00", "Grade 8"],
+    ["20180906 09:00:00", "20180906 10:00:00", "Grade 11"],
+    ["20180906 10:00:00", "20180906 11:00:00", "Lunch"],
+    ["20180907 08:00:00", "20180907 09:00:00", "Grade 8"],
+    ["20180907 10:00:00", "20180907 11:00:00", "Lunch"],
+    ["20180907 11:00:00", "20180907 12:00:00", "Grade 11"],
+  ]
+  teacher_calendar = Calendar()
+  for line in teacher_calendar_data:
+    e = Event()
+    begin, end, name = line
+    begin = arrow.get(begin, "YYYYMMDD HH:mm:ss")
+    end = arrow.get(end, "YYYYMMDD HH:mm:ss")
+    e.begin = begin
+    e.end = end
+    e.name = name
+    teacher_calendar.events.add(e)
 
   def setUp(self):
     self.setUpPyfakefs()
     os.mkdir(self.test_folder_path)
     os.mkdir(self.output_folder_path)
 
+
   def test_makes_ical_file_with_right_filename(self):
+
     saves_correctly = cycle_calendar_generator.saveTeacherScheduleIcal(
-      self.teacher_schedule,
-      teacher_name,
-      output_folder_path
+      self.teacher_calendar,
+      self.teacher_name,
+      self.output_folder_path
     )
     self.assertTrue(saves_correctly)
-    calendar_filepath = "{}/{}.ics".format(output_folder_path, teacher_name)
+    calendar_filepath = "{}/{}.ics".format(self.output_folder_path, self.teacher_name)
     self.assertTrue(os.path.exists(calendar_filepath))
 
   def test_raises_error_if_incorrect_output_path(self):
@@ -659,5 +689,5 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
         ValueError,
         cycle_calendar_generator.ERROR_INVALID_FOLDER,
         cycle_calendar_generator.saveTeacherScheduleIcal,
-        self.teacher_schedule, teacher_name, '/test-notafolder'
+        self.teacher_calendar, self.teacher_name, '/test-notafolder'
     )
