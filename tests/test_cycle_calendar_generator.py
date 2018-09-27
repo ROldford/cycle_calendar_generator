@@ -634,6 +634,7 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
   """Tests function to save teacher schedule ical file"""
 
   # Test setup
+  test_folder_path = "/test-folder"
   output_folder_path = "/test-folder/output"
   teacher_name = "Test Teacher"
 
