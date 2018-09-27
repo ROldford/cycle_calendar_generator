@@ -629,6 +629,34 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
         self.schedule_data_good, bad_setup_data
       )
 
-class Test_save_teacher_schedule_ical(unittest.TestCase):
+class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
   ## Save Calendar, using filename from teacher schedule file
   """Tests function to save teacher schedule ical file"""
+
+  # Test setup
+  output_folder_path = "/test-folder/output"
+  teacher_name = "Test Teacher"
+
+  def setUp(self):
+    self.setUpPyfakefs()
+    os.mkdir(self.test_folder_path)
+    os.mkdir(self.output_folder_path)
+
+  def test_makes_ical_file_with_right_filename(self):
+    saves_correctly = cycle_calendar_generator.saveTeacherScheduleIcal(
+      self.teacher_schedule,
+      teacher_name,
+      output_folder_path
+    )
+    self.assertTrue(saves_correctly)
+    calendar_filepath = "{}/{}.ics".format(output_folder_path, teacher_name)
+    self.assertTrue(os.path.exists(calendar_filepath))
+
+  def test_raises_error_if_incorrect_output_path(self):
+    # raises error when given nonexistent output path
+    self.assertRaisesRegex(
+        ValueError,
+        cycle_calendar_generator.ERROR_INVALID_FOLDER,
+        cycle_calendar_generator.saveTeacherScheduleIcal,
+        self.teacher_schedule, teacher_name, '/test-notafolder'
+    )
