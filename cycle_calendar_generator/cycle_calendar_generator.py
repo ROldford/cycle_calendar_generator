@@ -3,6 +3,7 @@
 """Main module."""
 import argparse
 import os
+import shutil
 from datetime import timedelta, time, date, datetime
 from math import floor
 
@@ -10,12 +11,14 @@ import openpyxl
 from ics import Calendar, Event
 
 SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
+OUTPUT_FOLDER_NAME = '/output'
 
 ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
 ERROR_INVALID_FOLDER = 'Not a valid folder'
 ERROR_INVALID_SETUP_FILE = 'Setup file does not follow proper format'
 ERROR_SETUP_FILE_NOT_EXCEL = 'Setup file is not a readable Excel file'
 ERROR_INVALID_SCHEDULE_FILE = 'Schedule file is not a readable Excel file'
+ERROR_NO_TEACHER_FILES = 'Folder has no Excel files for teachers'
 
 SHEET_SETUP_PERIOD_TIMING = 'Period Timing'
 SHEET_SETUP_CYCLEDAYSLIST = 'Cycle Days List'
@@ -191,6 +194,34 @@ def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
       if case():
         raise e
   return return_value
+
+def teacherScheduleFileScanner(setup_data, folder):
+  try:
+    # Check for output sub-folder in given folder
+    output_folder_path = folder + OUTPUT_FOLDER_NAME
+    if(os.path.isdir(output_folder_path)):
+      # If it exists, delete it and all files inside
+      shutil.rmtree(output_folder_path)
+    # Make the output sub-folder
+    os.mkdir(output_folder_path)
+    # Make list of all files in the given folder
+    # Remove setup file from list
+    folder_contents = []
+    with os.scandir(folder) as it:
+      for entry in it:
+        if ((entry.name != SCHEDULE_SETUP_FILENAME) and (entry.is_file())):
+          folder_contents.append(entry.name)
+    if (len(folder_contents) <= 0):
+      raise ValueError(ERROR_NO_TEACHER_FILES)
+    # For each remaining file:
+    # read filename and remove extension
+    # run readTeacher..., parseTeacher..., etc.
+    # When saving, use read filename to name new file
+  except Exception as e:
+    exception_type = str(type(e))
+    for case in switch(exception_type):
+      if case():
+        raise e
 
 # Convenience objects/functions
 class SetupData:
