@@ -252,10 +252,44 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
       self.wb_setup_bad
     )
 
-class Test_teacher_schedule_file_scanner(unittest.TestCase):
+class Test_teacher_schedule_file_scanner(fake_filesystem_unittest.TestCase):
   # Check for teacher schedule Excel files
   # Iterate over teacher schedule files
   """Tests function to scan through teacher schedule files and generate icals"""
+
+  # Test setup
+  test_folder_path = '/test-folder'
+  output_folder_path = test_folder_path + '/output'
+  # Mock all required functions
+  # Generate SetupData input object
+  wb_setup = make_setup_excel_good()
+  setupData = cycle_calendar_generator.parseScheduleSetup(
+    wb_setup
+  )
+  # Generate fake files in folder
+  def setUp(self):
+    self.setUpPyfakefs()
+    # os.mkdir(self.test_folder_path)
+    # filename_list = [
+    #   "Teacher One.xlsx",
+    #   "Teacher Two.xlsx",
+    #   "Teacher Three.xlsx"
+    # ]
+    # number_of_teachers = len(filename_list)
+    # for filename in filename_list:
+    #   filepath = "{}/{}".format(self.test_folder_path, filename)
+    #   with open(filepath, "x") as file:
+    #     file.write("Mock data")
+
+  def test_raises_error_if_no_teacher_schedule_excel_files(self):
+    folder = '/test-no-teachers'
+    os.mkdir(folder)
+    self.assertRaisesRegex(
+        ValueError,
+        cycle_calendar_generator.ERROR_NO_TEACHER_FILES,
+        cycle_calendar_generator.teacherScheduleFileScanner,
+        self.setupData, folder
+    )
 
 class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
   ## Read teacher schedule file
