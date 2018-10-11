@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8
 
 """Main module."""
 import argparse
@@ -11,7 +11,7 @@ import openpyxl
 from ics import Calendar, Event
 
 SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
-OUTPUT_FOLDER_NAME = '/output'
+OUTPUT_FOLDER_NAME = 'output'
 
 ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
 ERROR_INVALID_FOLDER = 'Not a valid folder'
@@ -19,11 +19,14 @@ ERROR_INVALID_SETUP_FILE = 'Setup file does not follow proper format'
 ERROR_SETUP_FILE_NOT_EXCEL = 'Setup file is not a readable Excel file'
 ERROR_INVALID_SCHEDULE_FILE = 'Schedule file is not a readable Excel file'
 ERROR_NO_TEACHER_FILES = 'Folder has no Excel files for teachers'
+ERROR_ICAL_DIDNT_SAVE = 'A teacher iCal did not save properly'
 
 SHEET_SETUP_PERIOD_TIMING = 'Period Timing'
 SHEET_SETUP_CYCLEDAYSLIST = 'Cycle Days List'
 SHEET_SETUP_YEARLYSCHEDULE = 'Yearly Schedule'
 SHEET_TEACHER_TEACHERSCHEDULE = 'Teacher Schedule'
+
+ALL_DONE = 'Schedule iCal generation complete!'
 
 def getArgs():
   return_value = None
@@ -63,6 +66,7 @@ def readScheduleSetupFile(folder):
   return return_value
 
 def parseScheduleSetup(workbook):
+  # TODO: Make parser convert non-datetimes into text
   return_value = SetupData()
   try:
     ws_periodTiming = workbook[SHEET_SETUP_PERIOD_TIMING]
@@ -105,11 +109,13 @@ def readTeacherScheduleFile(filepath):
         break
       if case("<class 'FileNotFoundError'>"):
         raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+        break
       if case:
         raise e
   return return_value
 
 def parseTeacherSchedule(workbook, setupData):
+  # TODO: Make parser convert non-datetimes into text
   return_value = ScheduleData(setupData.periodList)
   try:
     ws_teacherSchedule = workbook[SHEET_TEACHER_TEACHERSCHEDULE]
@@ -120,7 +126,13 @@ def parseTeacherSchedule(workbook, setupData):
     setup_periodList = setupData.periodList
     for cell in schedule_periodNumberCol:
       if not (cell.value in setup_periodList):
-        raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+
+        raise ValueError(
+          '{}: {}'.format(
+            ERROR_INVALID_SCHEDULE_FILE,
+            'Check that period numbers are the same in teacher schedule and setup file'
+          )
+        )
     # cycle through columns and add schedule days
     schedule_dayCols = cols_teacherSchedule[1:]
     for day in schedule_dayCols:
@@ -183,7 +195,7 @@ def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
   try:
     if (os.path.exists(folder_path)):
       teacher_filepath = "{}/{}.ics".format(folder_path, teacher_name)
-      with open(teacher_filepath, 'w') as f:
+      with open(teacher_filepath, 'w+') as f:
         f.writelines(teacher_calendar)
       return_value = True
     else:
@@ -196,9 +208,10 @@ def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
   return return_value
 
 def teacherScheduleFileScanner(setup_data, folder):
+  return_value = False
   try:
     # Check for output sub-folder in given folder
-    output_folder_path = folder + OUTPUT_FOLDER_NAME
+    output_folder_path = os.path.join(folder, OUTPUT_FOLDER_NAME)
     if(os.path.isdir(output_folder_path)):
       # If it exists, delete it and all files inside
       shutil.rmtree(output_folder_path)
@@ -209,19 +222,52 @@ def teacherScheduleFileScanner(setup_data, folder):
     folder_contents = []
     with os.scandir(folder) as it:
       for entry in it:
-        if ((entry.name != SCHEDULE_SETUP_FILENAME) and (entry.is_file())):
-          folder_contents.append(entry.name)
+        if (
+          entry.name != SCHEDULE_SETUP_FILENAME and
+          entry.is_file() and
+          (not entry.name.startswith('.')) and
+          (not entry.name.startswith('~$'))
+        ):
+          folder_contents.append(entry.path)
     if (len(folder_contents) <= 0):
       raise ValueError(ERROR_NO_TEACHER_FILES)
     # For each remaining file:
-    # read filename and remove extension
-    # run readTeacher..., parseTeacher..., etc.
-    # When saving, use read filename to name new file
+    for entry in folder_contents:
+      # read filename and remove extension
+      try:
+        path, filename = os.path.split(entry)
+        teacher_name = os.path.splitext(filename)[0]
+        # run readTeacher..., parseTeacher..., etc.
+        workbook = readTeacherScheduleFile(entry)
+        schedule = parseTeacherSchedule(workbook, setup_data)
+        teacher_calendar = generateTeacherScheduleCalendar(schedule, setup_data)
+        # When saving, use read filename to name new file
+        if (not saveTeacherScheduleIcal(
+          teacher_calendar,
+          teacher_name,
+          output_folder_path
+        )):
+          raise RuntimeError("{}: {}".format(ERROR_ICAL_DIDNT_SAVE, teacher_name))
+      except Exception as e:
+        exception_type = str(type(e))
+        for case in switch(exception_type):
+          if case():
+            raise type(e)('{} - {}'.format(teacher_name, str(e))) from e
+    return_value = True
   except Exception as e:
     exception_type = str(type(e))
     for case in switch(exception_type):
       if case():
         raise e
+  return return_value
+
+def main():
+  folder = getArgs()
+  setup_file = readScheduleSetupFile(folder)
+  setup_data = parseScheduleSetup(setup_file)
+  if teacherScheduleFileScanner(setup_data, folder):
+    print(ALL_DONE)
+
 
 # Convenience objects/functions
 class SetupData:
@@ -233,9 +279,9 @@ class SetupData:
 
   def appendPeriod(self, periodNumber, startTime, endTime):
     if periodNumber not in self.periodTiming:
-      startTime_parsed = convert_day_fraction_to_time(startTime)
-      endTime_parsed = convert_day_fraction_to_time(endTime)
-      self.periodTiming[periodNumber] = (startTime_parsed, endTime_parsed)
+      # startTime_parsed = convert_day_fraction_to_time(startTime)
+      # endTime_parsed = convert_day_fraction_to_time(endTime)
+      self.periodTiming[periodNumber] = (startTime, endTime)
       self.periodList.append(periodNumber)
     else:
       raise ValueError(ERROR_INVALID_SETUP_FILE)
@@ -287,3 +333,6 @@ def convert_day_fraction_to_time(day_fraction):
   secs_in_day = timedelta(days=1).total_seconds()
   total_s = floor(day_fraction*secs_in_day)
   return time(total_s//3600, (total_s%3600)//60)
+
+if __name__ == "__main__":
+  main()
