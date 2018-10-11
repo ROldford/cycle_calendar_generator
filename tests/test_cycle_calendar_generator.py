@@ -30,10 +30,6 @@ def convert_timestring_to_time(timestring):
   parsed_timestring = datetime.datetime.strptime(timestring, "%I:%M %p")
   return parsed_timestring.time()
 
-def convert_timestring_to_day_fraction(timestring):
-  parsed_time = convert_timestring_to_time(timestring)
-  return convert_time_to_day_fraction(parsed_time.hour, parsed_time.minute)
-
 def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
   return_value = openpyxl.Workbook()
   ws_periodTiming = return_value.create_sheet(
@@ -57,28 +53,28 @@ def make_setup_excel_good():
     ["Period Number", "Start Time", "End Time"],
     [
       "1",
-      convert_timestring_to_day_fraction("08:00 AM"),
-      convert_timestring_to_day_fraction("09:00 AM")
+      datetime.time(8,0),
+      datetime.time(9,0)
     ],
     [
       "2",
-      convert_timestring_to_day_fraction("09:00 AM"),
-      convert_timestring_to_day_fraction("10:00 AM")
+      datetime.time(9,0),
+      datetime.time(10,0)
     ],
     [
       "3",
-      convert_timestring_to_day_fraction("10:00 AM"),
-      convert_timestring_to_day_fraction("11:00 AM")
+      datetime.time(10,0),
+      datetime.time(11,0)
     ],
     [
       "4",
-      convert_timestring_to_day_fraction("11:00 AM"),
-      convert_timestring_to_day_fraction("12:00 PM")
+      datetime.time(11,0),
+      datetime.time(12,0)
     ],
     [
       "5",
-      convert_timestring_to_day_fraction("12:00 PM"),
-      convert_timestring_to_day_fraction("01:00 PM")
+      datetime.time(12,0),
+      datetime.time(13,0)
     ],
   ]
   good_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
@@ -522,28 +518,28 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
         ["Period Number", "Start Time", "End Time"],
         [
           "1",
-          convert_timestring_to_day_fraction("08:00 AM"),
-          convert_timestring_to_day_fraction("09:00 AM")
+          datetime.time(8, 0),
+          datetime.time(9, 0)
         ],
         [
           "2",
-          convert_timestring_to_day_fraction("09:00 AM"),
-          convert_timestring_to_day_fraction("10:00 AM")
+          datetime.time(9, 0),
+          datetime.time(10, 0)
         ],
         [
           "3",
-          convert_timestring_to_day_fraction("10:00 AM"),
-          convert_timestring_to_day_fraction("11:00 AM")
+          datetime.time(10, 0),
+          datetime.time(11, 0)
         ],
         [
           "4",
-          convert_timestring_to_day_fraction("11:00 AM"),
-          convert_timestring_to_day_fraction("12:00 PM")
+          datetime.time(11, 0),
+          datetime.time(12, 0)
         ],
         [
           "5",
-          convert_timestring_to_day_fraction("12:00 PM"),
-          convert_timestring_to_day_fraction("01:00 PM")
+          datetime.time(12, 0),
+          datetime.time(13, 0)
         ],
       ]
       bad_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
@@ -596,28 +592,28 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
         [
           # Reverse start and end times here
           "1",
-          convert_timestring_to_day_fraction("09:00 AM"),
-          convert_timestring_to_day_fraction("08:00 AM")
+          datetime.time(9, 0),
+          datetime.time(8, 0)
         ],
         [
           "2",
-          convert_timestring_to_day_fraction("09:00 AM"),
-          convert_timestring_to_day_fraction("10:00 AM")
+          datetime.time(9, 0),
+          datetime.time(10, 0)
         ],
         [
           "3",
-          convert_timestring_to_day_fraction("10:00 AM"),
-          convert_timestring_to_day_fraction("11:00 AM")
+          datetime.time(10, 0),
+          datetime.time(11, 0)
         ],
         [
           "4",
-          convert_timestring_to_day_fraction("11:00 AM"),
-          convert_timestring_to_day_fraction("12:00 PM")
+          datetime.time(11, 0),
+          datetime.time(12, 0)
         ],
         [
           "5",
-          convert_timestring_to_day_fraction("12:00 PM"),
-          convert_timestring_to_day_fraction("01:00 PM")
+          datetime.time(12, 0),
+          datetime.time(13, 0)
         ],
       ]
       bad_cycleDaysList = ["A1", "B2", "C3", "D4", "E5", "F6"]
