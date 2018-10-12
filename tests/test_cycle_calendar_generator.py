@@ -493,8 +493,8 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
       begin, end, name = line
       begin = arrow.get(begin, "YYYYMMDD HH:mm:ss")
       end = arrow.get(end, "YYYYMMDD HH:mm:ss")
-      e.begin = begin
-      e.end = end
+      e.begin = begin.replace(tzinfo='local')
+      e.end = end.replace(tzinfo='local')
       e.name = name
       correct_calendar.events.add(e)
     created_calendar = cycle_calendar_generator.generateTeacherScheduleCalendar(
