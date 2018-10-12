@@ -4,7 +4,7 @@
 import argparse
 import os
 import shutil
-from datetime import timedelta, time, date, datetime
+import datetime
 from math import floor
 
 import openpyxl
@@ -12,6 +12,8 @@ from ics import Calendar, Event
 
 SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
 OUTPUT_FOLDER_NAME = 'output'
+
+LOCAL_TIMEZONE = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
 
 ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
 ERROR_INVALID_FOLDER = 'Not a valid folder'
@@ -169,8 +171,8 @@ def generateTeacherScheduleCalendar(schedule, setupData):
         # Look up the start and end times matching the period number
         if period_name:
           timing = setupData.periodTiming[period_number]
-          start = datetime.combine(date_key, timing[0])
-          end = datetime.combine(date_key, timing[1])
+          start = datetime.datetime.combine(date_key, timing[0], LOCAL_TIMEZONE)
+          end = datetime.datetime.combine(date_key, timing[1], LOCAL_TIMEZONE)
           # Use start time, end time and schedule text to make Event
           e = Event()
           e.begin = start
@@ -330,9 +332,9 @@ class switch(object):
       return False
 
 def convert_day_fraction_to_time(day_fraction):
-  secs_in_day = timedelta(days=1).total_seconds()
+  secs_in_day = datetime.timedelta(days=1).total_seconds()
   total_s = floor(day_fraction*secs_in_day)
-  return time(total_s//3600, (total_s%3600)//60)
+  return datetime.time(total_s//3600, (total_s%3600)//60)
 
 if __name__ == "__main__":
   main()
