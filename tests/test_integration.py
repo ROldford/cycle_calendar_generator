@@ -83,4 +83,20 @@ class Test_integration(unittest.TestCase):
     # assert each key in output has matching in expected
     for key in output_files.keys():
       self.assertTrue(key in expected_files)
-    # assert values from matching keys are the same
+      # assert values from matching keys are the same
+      output_events = output_files[key]
+      expected_events = expected_files[key]
+      # import pdb; pdb.set_trace()
+      for i in range(len(output_events)):
+        output_event = output_events[i]
+        expected_event = expected_events[i]
+        # import pdb; pdb.set_trace()
+        self.assertEqual(output_event.name, expected_event.name)
+        self.assertEqual(
+          output_event.begin.to('utc'),
+          expected_event.begin.to('utc')
+        )
+        self.assertEqual(
+          output_event.end.to('utc'),
+          expected_event.end.to('utc')
+        )
