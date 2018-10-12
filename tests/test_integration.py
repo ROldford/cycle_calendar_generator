@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# import pdb; pdb.set_trace()
+# -*- coding: utf-8 -*
+
 """Integration test for `cycle_calendar_generator` package."""
 
 import unittest
@@ -59,7 +59,6 @@ class Test_integration(unittest.TestCase):
     # read output icals into dictionary (teacher name as key)
     output_files = {}
     with os.scandir(TEST_OUTPUT_FOLDER) as output_files_scan:
-      # import pdb; pdb.set_trace()
       for file in output_files_scan:
         if file.is_file():
           path, filename = os.path.split(file.path)
@@ -68,7 +67,6 @@ class Test_integration(unittest.TestCase):
             calendar = ics.Calendar(ical.read())
           sorted_events = sorted(calendar.events, key=lambda event:event.begin)
           output_files[teacher_name] = sorted_events
-          # import pdb; pdb.set_trace()
     # read expected output icals into similar dictionary
     expected_files = {}
     with os.scandir(TEST_EXPECTED_OUTPUT_FOLDER) as expected_files_scan:
@@ -80,9 +78,9 @@ class Test_integration(unittest.TestCase):
             calendar = ics.Calendar(ical.read())
           sorted_events = sorted(calendar.events, key=lambda event:event.begin)
           expected_files[teacher_name] = sorted_events
-          # import pdb; pdb.set_trace()
     # assert both dicts have same size
-    # import pdb; pdb.set_trace()
     self.assertEqual(len(output_files), len(expected_files))
     # assert each key in output has matching in expected
+    for key in output_files.keys():
+      self.assertTrue(key in expected_files)
     # assert values from matching keys are the same
