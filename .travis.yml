@@ -2,7 +2,6 @@
 
 language: python
 python:
-  - 3.4
   - 3.5
   - 3.6
 matrix:
@@ -15,4 +14,4 @@ matrix:
 install: pip3 install -r requirements.txt
 
 # Command to run tests, e.g. python setup.py test
-script: python setup.py text
+script: python setup.py test
