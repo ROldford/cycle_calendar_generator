@@ -91,11 +91,15 @@ class Test_integration(unittest.TestCase):
         output_event = output_events[i]
         expected_event = expected_events[i]
         self.assertEqual(output_event.name, expected_event.name)
+        output_event_start = output_event.begin.to('utc')
+        expected_event_start = expected_event.begin.to('utc')
+        output_event_end = output_event.end.to('utc')
+        expected_event_end = expected_event.end.to('utc')
         self.assertEqual(
-          output_event.begin.to('utc'),
-          expected_event.begin.to('utc')
+          output_event_start,
+          expected_event_start
         )
         self.assertEqual(
-          output_event.end.to('utc'),
-          expected_event.end.to('utc')
+          output_event_end,
+          expected_event_end
         )
