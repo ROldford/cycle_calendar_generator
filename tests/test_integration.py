@@ -24,7 +24,7 @@ TEST_TEMP_FOLDER = os.path.join(INTEGRATION_TEST_FOLDER, 'temp')
 TEST_OUTPUT_FOLDER = os.path.join(TEST_TEMP_FOLDER, 'output')
 SCRIPT_PATH = os.path.join(
   Path(CURRENT_WORKING_DIRECTORY).parent,
-  'cycle_calendar_generator/cycle_calendar_generator.py'
+  'cycle_calendar_generator','cycle_calendar_generator.py'
 )
 
 class Test_integration(unittest.TestCase):
