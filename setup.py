@@ -11,11 +11,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [ ]
+requirements = ['openpyxl', 'ics']
 
 setup_requirements = [ ]
 
-test_requirements = [ ]
+test_requirements = ['pyfakefs']
 
 setup(
     author="Ryan William Maynard Oldford",
