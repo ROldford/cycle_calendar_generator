@@ -9,6 +9,7 @@ import sys
 import shutil
 import subprocess
 from pathlib import Path
+
 import ics
 
 CURRENT_WORKING_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
@@ -86,11 +87,9 @@ class Test_integration(unittest.TestCase):
       # assert values from matching keys are the same
       output_events = output_files[key]
       expected_events = expected_files[key]
-      # import pdb; pdb.set_trace()
       for i in range(len(output_events)):
         output_event = output_events[i]
         expected_event = expected_events[i]
-        # import pdb; pdb.set_trace()
         self.assertEqual(output_event.name, expected_event.name)
         self.assertEqual(
           output_event.begin.to('utc'),
