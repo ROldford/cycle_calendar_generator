@@ -1,0 +1,8 @@
+arrow==0.4.2
+et-xmlfile==1.0.1
+ics==0.4
+jdcal==1.4
+openpyxl==2.5.8
+pyfakefs==3.4.3
+python-dateutil==2.7.3
+six==1.11.0
