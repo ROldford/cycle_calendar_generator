@@ -12,7 +12,7 @@ matrix:
       sudo: true
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip3 install -r requirements.txt --use-mirrors
+install: pip3 install -r requirements.txt
 
 # Command to run tests, e.g. python setup.py test
 script: python setup.py text
