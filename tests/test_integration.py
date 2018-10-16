@@ -4,7 +4,6 @@
 """Integration test for `cycle_calendar_generator` package."""
 
 import unittest
-from unittest import mock
 import os
 import sys
 import shutil
@@ -12,11 +11,12 @@ import subprocess
 from pathlib import Path
 import datetime
 
+from cycle_calendar_generator import cycle_calendar_generator
+
 import ics
 import arrow
 
 CURRENT_WORKING_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-# TODO: Fix all paths to use path.join without hardcoded folder separators
 INTEGRATION_TEST_FOLDER = os.path.join(
   CURRENT_WORKING_DIRECTORY,
   'integration_test'
@@ -58,13 +58,7 @@ class Test_integration(unittest.TestCase):
         else:
           os.remove(file.path)
 
-  @mock.patch(
-    'cycle_calendar_generator.cycle_calendar_generator',
-    autospec=True
-  )
-  def test_script_works_in_normal_case(self, mocked_now):
-    testing_timezone = arrow.now('+08:00').datetime.tzinfo
-    mocked_now.LOCAL_TIMEZONE.return_value = testing_timezone
+  def test_script_works_in_normal_case(self):
     # run script
     subprocess.run(['python3', SCRIPT_PATH, TEST_TEMP_FOLDER])
     # read output icals into dictionary (teacher name as key)
@@ -101,10 +95,18 @@ class Test_integration(unittest.TestCase):
         output_event = output_events[i]
         expected_event = expected_events[i]
         self.assertEqual(output_event.name, expected_event.name)
+        # Output times already use local timezone, but expected times use tz
+        # in iCal file (China Std. Time)
+        # Expected times need to have tz replaced with local tz
+        # without changing anything else
         output_event_start = output_event.begin.to('utc')
-        expected_event_start = expected_event.begin.to('utc')
+        expected_event_start = expected_event.begin.replace(
+          tzinfo=cycle_calendar_generator.LOCAL_TIMEZONE
+        ).to('utc')
         output_event_end = output_event.end.to('utc')
-        expected_event_end = expected_event.end.to('utc')
+        expected_event_end = expected_event.end.replace(
+          tzinfo=cycle_calendar_generator.LOCAL_TIMEZONE
+        ).to('utc')
         self.assertEqual(
           output_event_start,
           expected_event_start

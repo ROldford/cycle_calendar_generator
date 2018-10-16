@@ -9,10 +9,6 @@ matrix:
       dist: xenial
       sudo: true
 
-before_install:
-  - export TZ=China/Beijing
-  - date
-
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip3 install -r requirements.txt
 
