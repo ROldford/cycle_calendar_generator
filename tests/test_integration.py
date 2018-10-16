@@ -4,13 +4,16 @@
 """Integration test for `cycle_calendar_generator` package."""
 
 import unittest
+from unittest import mock
 import os
 import sys
 import shutil
 import subprocess
 from pathlib import Path
+import datetime
 
 import ics
+import arrow
 
 CURRENT_WORKING_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # TODO: Fix all paths to use path.join without hardcoded folder separators
@@ -26,6 +29,7 @@ SCRIPT_PATH = os.path.join(
   Path(CURRENT_WORKING_DIRECTORY).parent,
   'cycle_calendar_generator','cycle_calendar_generator.py'
 )
+
 
 class Test_integration(unittest.TestCase):
   """Tests function to get folder argument and give default if none given"""
@@ -54,7 +58,13 @@ class Test_integration(unittest.TestCase):
         else:
           os.remove(file.path)
 
-  def test_script_works_in_normal_case(self):
+  @mock.patch(
+    'cycle_calendar_generator.cycle_calendar_generator',
+    autospec=True
+  )
+  def test_script_works_in_normal_case(self, mocked_now):
+    testing_timezone = arrow.now('+08:00').datetime.tzinfo
+    mocked_now.LOCAL_TIMEZONE.return_value = testing_timezone
     # run script
     subprocess.run(['python3', SCRIPT_PATH, TEST_TEMP_FOLDER])
     # read output icals into dictionary (teacher name as key)

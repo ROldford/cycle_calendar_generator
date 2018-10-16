@@ -9,11 +9,12 @@ from math import floor
 
 import openpyxl
 from ics import Calendar, Event
+import arrow
 
 SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
 OUTPUT_FOLDER_NAME = 'output'
 
-LOCAL_TIMEZONE = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+LOCAL_TIMEZONE = arrow.now().datetime.tzinfo
 
 ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
 ERROR_INVALID_FOLDER = 'Not a valid folder'
