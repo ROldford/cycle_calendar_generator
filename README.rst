@@ -65,22 +65,18 @@ Examples
 | Period Number | Start Time | End Time |
 |---------------|------------|----------|
 |       1       |    8:00    |   9:00   |
-|---------------|------------|----------|
 |       2       |    9:00    |   10:00  |
-|---------------|------------|----------|
 |       2       |    10:00   |   11:00  |
-|---------------|------------|----------|
 |       2       |    11:00   |   12:00  |
-|---------------|------------|----------|
 |       2       |    12:00   |   13:00  |
 
-** Times can be in either 24h or 12h format. "Period Number" should be text format, not number. **
+*Times can be in either 24h or 12h format. "Period Number" should be text format, not number.*
 
 * Cycle Days List *
 |----|----|----|----|----|----|
 | A1 | B2 | C3 | D4 | E5 | F6 |
 |----|----|----|----|----|----|
-** The entries here are the official names for all cycle days. Every cycle day entry in other sheets must match these values. **
+*The entries here are the official names for all cycle days. Every cycle day entry in other sheets must match these values.*
 
 * Yearly Schedule *
 |----------|-------|
@@ -99,7 +95,7 @@ Examples
 |----------|-------|
 |  9/7/18  |  F6   |
 |----------|-------|
-** Dates can be displayed any way, but must be date format. Entries in the "Cycle Day" column must be an official cycle day as defined in Cycle Days List. **
+*Dates can be displayed any way, but must be date format. Entries in the "Cycle Day" column must be an official cycle day as defined in Cycle Days List.*
 
 * User Schedule *
 |---------------|----------|----------|----------|---------|----------|----------|
@@ -111,7 +107,7 @@ Examples
 | 4             | Grade 11 |          |          | Grade 8 |          | Grade 11 |
 | 5             |          |          | Grade 8  |         | Grade 11 |          |
 |---------------|----------|----------|----------|---------|----------|----------|
-** "Period Number" should be text format, not number. The "Cycle Days" in the top row must be official cycle days as defined in Cycle Days List**
+*"Period Number" should be text format, not number. The "Cycle Days" in the top row must be official cycle days as defined in Cycle Days List*
 
 Tests
 -----
