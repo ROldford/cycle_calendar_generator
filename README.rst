@@ -62,6 +62,7 @@ Examples
 
 **Period Timing**
 
+
 | Period Number | Start Time | End Time |
 | ------------- | ---------- | -------- |
 |       1       |    8:00    |   9:00   |
