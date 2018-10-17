@@ -5,18 +5,22 @@ Cycle Calendar Generator
 
 .. image:: https://img.shields.io/pypi/v/cycle_calendar_generator.svg
         :target: https://pypi.python.org/pypi/cycle_calendar_generator
+        :alt: PyPI Package Status
 
 .. image:: https://img.shields.io/travis/ROldford/cycle_calendar_generator.svg
         :target: https://travis-ci.org/ROldford/cycle_calendar_generator
+        :alt: Travis CI Status
 
 .. image:: https://readthedocs.org/projects/cycle-calendar-generator/badge/?version=latest
         :target: https://cycle-calendar-generator.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
+.. image:: https://img.shields.io/badge/python-3.5+-blue.svg
+        :target: https://www.python.org/download/releases/3.5.0/)
+        :alt: Compatible with Python 3.5+
 
 
-
-Generates iCal files for class schedules for schools using an N-day cycle
+*Generates iCal files for class schedules for schools using an N-day cycle*
 
 If you're a teacher or a student, you probably have a 6 or 7-day cycle.
 You'd like to enter your schedule into your calendar, but calendar software doesn't support "recur every n weekdays".
@@ -29,9 +33,7 @@ You just need to make an Excel file with your school's schedule, and another Exc
 Installation
 ------------
 
-```
-$ pip install cycle_calendar_generator
-```
+        ``$ pip install cycle_calendar_generator``
 
 Usage
 -----
@@ -53,7 +55,7 @@ Usage
 3. Put all files in any folder
 4. Run the application as follows:
 
-        $ cycle_calendar_generator path/to/schedule/files
+        ``$ cycle_calendar_generator path/to/schedule/files``
 
 5. Schedule iCal files are found in the /output folder under the folder with your input Excel files.
 
@@ -127,8 +129,26 @@ Examples
 Tests
 -----
 
+For current Python version:
+        ``python3 setup.py test``
+
+For versions 3.5+
+        ``tox``
+
+It's recommended to use pyenv_ to install Python versions required by tox.
+pyenv can be installed using Homebrew_.::
+
+        brew update
+        brew install pyenv
+        pyenv install 3.5.6 3.6.6 3.7.0
+
+.. _pyenv: https://github.com/pyenv/pyenv
+.. _Homebrew: https://brew.sh/
+
 Contribute
 ----------
+
+Contributions are always welcome! For thoughts on features or bug reports see Issues. If you're interested in contributing to this library, see details on doing so in the CONTRIBUTING.rst file in this repository.
 
 Credits
 -------
