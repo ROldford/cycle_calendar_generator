@@ -63,27 +63,27 @@ Examples
 **Period Timing**
 
 
-| Period Number | Start Time | End Time |
-| ------------- | ---------- | -------- |
-|       1       |    8:00    |   9:00   |
-|       2       |    9:00    |   10:00  |
-|       3       |    10:00   |   11:00  |
-|       4       |    11:00   |   12:00  |
-|       5       |    12:00   |   13:00  |
+ Period Number | Start Time | End Time
+      ---      |     ---    |   ---   
+       1       |    8:00    |   9:00   
+       2       |    9:00    |   10:00  
+       3       |    10:00   |   11:00  
+       4       |    11:00   |   12:00  
+       5       |    12:00   |   13:00  
 
 *Times can be in either 24h or 12h format. "Period Number" should be text format, not number.*
 
 **Cycle Days List**
 
-| A1 | B2 | C3 | D4 | E5 | F6 |
-| -- | -- | -- | -- | -- | -- |
+|  A1 |  B2 |  C3 |  D4 |  E5 |  F6 |
+| --- | --- | --- | --- | --- | --- |
 
 *The entries here are the official names for all cycle days. Every cycle day entry in other sheets must match these values.*
 
 **Yearly Schedule**
 
 |   Date   | Cycle Day |
-| -------- | --------- |
+|   ---    |    ---    |
 |  8/31/18 |    A1     |
 |  9/3/18  |    B2     |
 |  9/4/18  |    C3     |
@@ -96,7 +96,7 @@ Examples
 **User Schedule**
 
 | Period Number | A1       | B2       | C3       | D4      | E5       | F6       |
-| ------------- | -------- | -------- | -------- | ------- | -------- | -------- |
+|      ---      |    ---   |    ---   |    ---   |   ---   |    ---   |    ---   |
 | 1             | Grade 8  |          | Grade 11 |         |          | Grade 8  |
 | 2             |          | Grade 11 |          |         | Grade 8  |          |
 | 3             | Lunch    | Lunch    | Lunch    | Lunch   | Lunch    | Lunch    |
