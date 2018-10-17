@@ -60,8 +60,12 @@ Usage
 Examples
 --------
 
-**Period Timing**
+| Left-aligned | Center-aligned | Right-aligned |
+| :---         |     :---:      |          ---: |
+| git status   | git status     | git status    |
+| git diff     | git diff       | git diff      |
 
+**Period Timing**
 
  Period Number | Start Time | End Time
       ---      |     ---    |   ---   
