@@ -61,7 +61,7 @@ Examples
 --------
 
 * Period Timing *
-|---------------|------------|----------|
+
 | Period Number | Start Time | End Time |
 |---------------|------------|----------|
 |       1       |    8:00    |   9:00   |
@@ -73,7 +73,7 @@ Examples
 |       2       |    11:00   |   12:00  |
 |---------------|------------|----------|
 |       2       |    12:00   |   13:00  |
-|---------------|------------|----------|
+
 ** Times can be in either 24h or 12h format. "Period Number" should be text format, not number. **
 
 * Cycle Days List *
