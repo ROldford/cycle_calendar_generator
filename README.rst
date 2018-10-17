@@ -60,53 +60,48 @@ Usage
 Examples
 --------
 
-* Period Timing *
+**Period Timing**
 
 | Period Number | Start Time | End Time |
-|---------------|------------|----------|
+| :-----------: | :--------: | :------: |
 |       1       |    8:00    |   9:00   |
 |       2       |    9:00    |   10:00  |
-|       2       |    10:00   |   11:00  |
-|       2       |    11:00   |   12:00  |
-|       2       |    12:00   |   13:00  |
+|       3       |    10:00   |   11:00  |
+|       4       |    11:00   |   12:00  |
+|       5       |    12:00   |   13:00  |
 
 *Times can be in either 24h or 12h format. "Period Number" should be text format, not number.*
 
-* Cycle Days List *
-|----|----|----|----|----|----|
+**Cycle Days List**
+
 | A1 | B2 | C3 | D4 | E5 | F6 |
-|----|----|----|----|----|----|
+| -- | -- | -- | -- | -- | -- |
+
 *The entries here are the official names for all cycle days. Every cycle day entry in other sheets must match these values.*
 
-* Yearly Schedule *
-|----------|-------|
-|   Date   | Cycle |
-|          |  Day  |
-|----------|-------|
-|  8/31/18 |  A1   |
-|----------|-------|
-|  9/3/18  |  B2   |
-|----------|-------|
-|  9/4/18  |  C3   |
-|----------|-------|
-|  9/5/18  |  D4   |
-|----------|-------|
-|  9/6/18  |  E5   |
-|----------|-------|
-|  9/7/18  |  F6   |
-|----------|-------|
+**Yearly Schedule**
+
+|   Date   | Cycle Day |
+| :------: | :-------: |
+|  8/31/18 |    A1     |
+|  9/3/18  |    B2     |
+|  9/4/18  |    C3     |
+|  9/5/18  |    D4     |
+|  9/6/18  |    E5     |
+|  9/7/18  |    F6     |
+
 *Dates can be displayed any way, but must be date format. Entries in the "Cycle Day" column must be an official cycle day as defined in Cycle Days List.*
 
-* User Schedule *
-|---------------|----------|----------|----------|---------|----------|----------|
+**User Schedule**
+
 | Period Number | A1       | B2       | C3       | D4      | E5       | F6       |
-|---------------|----------|----------|----------|---------|----------|----------|
+| :-----------: | :------: | :------: | :------: | :-----: | :------: | :------: |
 | 1             | Grade 8  |          | Grade 11 |         |          | Grade 8  |
 | 2             |          | Grade 11 |          |         | Grade 8  |          |
 | 3             | Lunch    | Lunch    | Lunch    | Lunch   | Lunch    | Lunch    |
 | 4             | Grade 11 |          |          | Grade 8 |          | Grade 11 |
 | 5             |          |          | Grade 8  |         | Grade 11 |          |
-|---------------|----------|----------|----------|---------|----------|----------|
+
 *"Period Number" should be text format, not number. The "Cycle Days" in the top row must be official cycle days as defined in Cycle Days List*
 
 Tests
