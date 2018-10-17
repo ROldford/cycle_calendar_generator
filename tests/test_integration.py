@@ -26,7 +26,7 @@ TEST_EXPECTED_OUTPUT_FOLDER = os.path.join(INTEGRATION_TEST_FOLDER, 'expected')
 TEST_TEMP_FOLDER = os.path.join(INTEGRATION_TEST_FOLDER, 'temp')
 TEST_OUTPUT_FOLDER = os.path.join(TEST_TEMP_FOLDER, 'output')
 SCRIPT_PATH = os.path.join(
-    Path(CURRENT_WORKING_DIRECTORY).parent,
+    str(Path(CURRENT_WORKING_DIRECTORY).parent),
     'cycle_calendar_generator','cycle_calendar_generator.py'
     )
 
@@ -43,48 +43,56 @@ class Test_integration(unittest.TestCase):
 
     def setUp(self):
         # copy test input files from TEST_FILES_FOLDER to TEST_TEMP_FOLDER
-        with os.scandir(TEST_FILES_FOLDER) as testing_files:
-            for file in testing_files:
-                source_path = file.path
-                dest_path = os.path.join(TEST_TEMP_FOLDER, file.name)
-                shutil.copy(source_path, dest_path)
+        for file in cycle_calendar_generator.scandir_with_version_check(
+                TEST_FILES_FOLDER,
+                cycle_calendar_generator.VERSION_MAJOR,
+                cycle_calendar_generator.VERSION_MINOR):
+            source_path = file.path
+            dest_path = os.path.join(TEST_TEMP_FOLDER, file.name)
+            shutil.copy(source_path, dest_path)
 
     def tearDown(self):
         # delete all files and folders in TEST_TEMP_FOLDER
-        with os.scandir(TEST_TEMP_FOLDER) as files_to_delete:
-            for file in files_to_delete:
-                if file.is_dir():
-                    shutil.rmtree(file.path)
-                else:
-                    os.remove(file.path)
+        for file in cycle_calendar_generator.scandir_with_version_check(
+                TEST_TEMP_FOLDER,
+                cycle_calendar_generator.VERSION_MAJOR,
+                cycle_calendar_generator.VERSION_MINOR):
+            if file.is_dir():
+                shutil.rmtree(file.path)
+            else:
+                os.remove(file.path)
 
     def test_script_works_in_normal_case(self):
         # run script
         subprocess.run(['python3', SCRIPT_PATH, TEST_TEMP_FOLDER])
         # read output icals into dictionary (teacher name as key)
         output_files = {}
-        with os.scandir(TEST_OUTPUT_FOLDER) as output_files_scan:
-            for file in output_files_scan:
-                if file.is_file():
-                    path, filename = os.path.split(file.path)
-                    teacher_name = os.path.splitext(filename)[0]
-                    with open(file.path) as ical:
-                        calendar = ics.Calendar(ical.read())
-                        sorted_events = sorted(calendar.events,
-                                               key=lambda event:event.begin)
-                        output_files[teacher_name] = sorted_events
+        for file in cycle_calendar_generator.scandir_with_version_check(
+                TEST_OUTPUT_FOLDER,
+                cycle_calendar_generator.VERSION_MAJOR,
+                cycle_calendar_generator.VERSION_MINOR):
+            if file.is_file():
+                path, filename = os.path.split(file.path)
+                teacher_name = os.path.splitext(filename)[0]
+                with open(file.path) as ical:
+                    calendar = ics.Calendar(ical.read())
+                sorted_events = sorted(calendar.events,
+                                       key=lambda event:event.begin)
+                output_files[teacher_name] = sorted_events
         # read expected output icals into similar dictionary
         expected_files = {}
-        with os.scandir(TEST_EXPECTED_OUTPUT_FOLDER) as expected_files_scan:
-            for file in expected_files_scan:
-                if file.is_file():
-                    path, filename = os.path.split(file.path)
-                    teacher_name = os.path.splitext(filename)[0]
-                    with open(file.path) as ical:
-                        calendar = ics.Calendar(ical.read())
-                        sorted_events = sorted(calendar.events,
-                                               key=lambda event:event.begin)
-                        expected_files[teacher_name] = sorted_events
+        for file in cycle_calendar_generator.scandir_with_version_check(
+                TEST_EXPECTED_OUTPUT_FOLDER,
+                cycle_calendar_generator.VERSION_MAJOR,
+                cycle_calendar_generator.VERSION_MINOR):
+            if file.is_file():
+                path, filename = os.path.split(file.path)
+                teacher_name = os.path.splitext(filename)[0]
+                with open(file.path) as ical:
+                    calendar = ics.Calendar(ical.read())
+                sorted_events = sorted(calendar.events,
+                                       key=lambda event:event.begin)
+                expected_files[teacher_name] = sorted_events
         # assert both dicts have same size
         self.assertEqual(len(output_files), len(expected_files))
         # assert each key in output has matching in expected

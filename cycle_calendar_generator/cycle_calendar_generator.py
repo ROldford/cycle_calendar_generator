@@ -6,6 +6,7 @@ import os
 import shutil
 import datetime
 from math import floor
+import sys
 
 import openpyxl
 from ics import Calendar, Event
@@ -15,6 +16,8 @@ SCHEDULE_SETUP_FILENAME = 'schedule_setup.xlsx'
 OUTPUT_FOLDER_NAME = 'output'
 
 LOCAL_TIMEZONE = arrow.now().datetime.tzinfo
+VERSION_MAJOR = sys.version_info.major
+VERSION_MINOR = sys.version_info.minor
 
 ERROR_MISSING_SETUP_FILE = 'No schedule setup file found'
 ERROR_INVALID_FOLDER = 'Not a valid folder'
@@ -44,7 +47,7 @@ def getArgs():
         return_value = os.getcwd()
     else:
         return_value = parsed_args.folder
-        return return_value
+    return return_value
 
 
 def readScheduleSetupFile(folder):
@@ -62,11 +65,12 @@ def readScheduleSetupFile(folder):
                     break
                 if case("<class 'FileNotFoundError'>"):
                     raise ValueError(ERROR_MISSING_SETUP_FILE)
+                    break
                 if case:
                     raise e
-                else:
-                    raise ValueError(ERROR_INVALID_FOLDER)
-                    return return_value
+    else:
+        raise ValueError(ERROR_INVALID_FOLDER)
+    return return_value
 
 
 def parseScheduleSetup(workbook):
@@ -97,8 +101,9 @@ def parseScheduleSetup(workbook):
             if case("<class 'KeyError'>"):
                 raise ValueError(ERROR_INVALID_SETUP_FILE)
                 break
-                if case():
-                    raise e
+            if case():
+                raise e
+                break
     return return_value
 
 
@@ -136,10 +141,8 @@ def parseTeacherSchedule(workbook, setupData):
                     '{}: {}'.format(
                         ERROR_INVALID_SCHEDULE_FILE,
                         'Check that period numbers are the same ' +
-                        'in teacher schedule and setup file'
-                    )
-                )
-    # cycle through columns and add schedule days
+                        'in teacher schedule and setup file'))
+        # cycle through columns and add schedule days
         schedule_dayCols = cols_teacherSchedule[1:]
         for day in schedule_dayCols:
             if day[0].value in setupData.cycleDaysList:
@@ -156,6 +159,7 @@ def parseTeacherSchedule(workbook, setupData):
         for case in switch(exception_type):
             if case("<class 'KeyError'>"):
                 raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
+                break
             if case():
                 raise e
     return return_value
@@ -176,10 +180,10 @@ def generateTeacherScheduleCalendar(schedule, setupData):
                 # Look up the start and end times matching the period number
                 if period_name:
                     timing = setupData.periodTiming[period_number]
-                    start = datetime.datetime.combine(date_key, timing[0],
-                                                      LOCAL_TIMEZONE)
-                    end = datetime.datetime.combine(date_key, timing[1],
-                                                    LOCAL_TIMEZONE)
+                    start_time = timing[0].replace(tzinfo=LOCAL_TIMEZONE)
+                    start = datetime.datetime.combine(date_key, start_time)
+                    end_time = timing[1].replace(tzinfo=LOCAL_TIMEZONE)
+                    end = datetime.datetime.combine(date_key, end_time)
                     # Use start time, end time and schedule text to make Event
                     e = Event()
                     e.begin = start
@@ -226,18 +230,19 @@ def teacherScheduleFileScanner(setup_data, folder):
         if(os.path.isdir(output_folder_path)):
             # If it exists, delete it and all files inside
             shutil.rmtree(output_folder_path)
-            # Make the output sub-folder
-            os.mkdir(output_folder_path)
-            # Make list of all files in the given folder
-            # Remove setup file from list
-            folder_contents = []
-        with os.scandir(folder) as it:
-            for entry in it:
-                if (entry.name != SCHEDULE_SETUP_FILENAME and
-                        entry.is_file() and
-                        (not entry.name.startswith('.')) and
-                        (not entry.name.startswith('~$'))):
-                    folder_contents.append(entry.path)
+        # Make the output sub-folder
+        os.mkdir(output_folder_path)
+        # Make list of all files in the given folder
+        # Remove setup file from list
+        folder_contents = []
+        folder_scan_results = scandir_with_version_check(folder, VERSION_MAJOR,
+                                                         VERSION_MINOR)
+        for entry in folder_scan_results:
+            if (entry.name != SCHEDULE_SETUP_FILENAME and
+                    entry.is_file() and
+                    (not entry.name.startswith('.')) and
+                    (not entry.name.startswith('~$'))):
+                folder_contents.append(entry.path)
         if (len(folder_contents) <= 0):
             raise ValueError(ERROR_NO_TEACHER_FILES)
         # For each remaining file:
@@ -317,8 +322,8 @@ class ScheduleData:
         schedule_periods_list = schedule_list[1:]
         if len(schedule_periods_list) != len(self.periodList):
             raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
-            schedule_day = dict(zip(self.periodList, schedule_periods_list))
-            self.teacherSchedule[schedule_day_key] = schedule_day
+        schedule_day = dict(zip(self.periodList, schedule_periods_list))
+        self.teacherSchedule[schedule_day_key] = schedule_day
 
 
 class switch(object):
@@ -346,6 +351,20 @@ def convert_day_fraction_to_time(day_fraction):
     secs_in_day = datetime.timedelta(days=1).total_seconds()
     total_s = floor(day_fraction*secs_in_day)
     return datetime.time(total_s//3600, (total_s % 3600)//60)
+
+
+def scandir_with_version_check(folder, version_major, version_minor):
+    return_value = []
+    if (version_major == 3 and version_minor >= 6):
+        with os.scandir(folder) as it:
+            for entry in it:
+                return_value.append(entry)
+    elif (version_major == 3 and version_minor <= 5):
+        for entry in os.scandir(folder):
+            return_value.append(entry)
+    else:
+        raise RuntimeError('Please use Python 3.5 or higher')
+    return return_value
 
 
 if __name__ == "__main__":

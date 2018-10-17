@@ -32,9 +32,12 @@ def convert_timestring_to_time(timestring):
 
 def make_setup_excel(periodTiming, cycleDaysList, yearlySchedule):
     return_value = openpyxl.Workbook()
-    ws_periodTiming = return_value.create_sheet( cycle_calendar_generator.SHEET_SETUP_PERIOD_TIMING )
-    ws_cycleDaysList = return_value.create_sheet( cycle_calendar_generator.SHEET_SETUP_CYCLEDAYSLIST )
-    ws_yearlySchedule = return_value.create_sheet( cycle_calendar_generator.SHEET_SETUP_YEARLYSCHEDULE )
+    ws_periodTiming = return_value.create_sheet(
+        cycle_calendar_generator.SHEET_SETUP_PERIOD_TIMING)
+    ws_cycleDaysList = return_value.create_sheet(
+        cycle_calendar_generator.SHEET_SETUP_CYCLEDAYSLIST)
+    ws_yearlySchedule = return_value.create_sheet(
+        cycle_calendar_generator.SHEET_SETUP_YEARLYSCHEDULE)
     for line in periodTiming:
         ws_periodTiming.append(line)
     ws_cycleDaysList.append(cycleDaysList)
@@ -63,7 +66,6 @@ def make_setup_excel_good():
                         good_cycleDaysList[4]],
                        [convert_date_string_to_datetime("September 7, 2018"),
                         good_cycleDaysList[5]]]
-
     return make_setup_excel(good_periodTiming, good_cycleDaysList,
                             good_yearlySchedule)
 
@@ -366,9 +368,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
     # Test input data
     # SetupData
     wb_setup = make_setup_excel_good()
-    setup_data = cycle_calendar_generator.parseScheduleSetup(
-          wb_setup
-          )
+    setup_data = cycle_calendar_generator.parseScheduleSetup(wb_setup)
     # ScheduleData
     data_teacherSchedule = [
         ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
@@ -378,10 +378,8 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
         ["4", "Grade 11", "", "Grade 8", "", "", "Grade 11"],
         ["5", "", "Grade 11", "", "Grade 8", "", ""]]
     wb_schedule_good = openpyxl.Workbook()
-    sheetname_teacherSchedule = \
-            cycle_calendar_generator.SHEET_TEACHER_TEACHERSCHEDULE
     ws_teacherSchedule = wb_schedule_good.create_sheet(
-            sheetname_teacherSchedule)
+            cycle_calendar_generator.SHEET_TEACHER_TEACHERSCHEDULE)
     for line in data_teacherSchedule:
         ws_teacherSchedule.append(line)
     schedule_data_good = cycle_calendar_generator.parseTeacherSchedule(
@@ -417,24 +415,24 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
             e.end = end.replace(tzinfo='local')
             e.name = name
             correct_calendar.events.add(e)
-            created_calendar = \
-                    cycle_calendar_generator.generateTeacherScheduleCalendar(
-                            self.schedule_data_good, self.setup_data)
-            self.assertIsInstance(created_calendar, cycle_calendar_generator.Calendar)
-            created_calendar_count = len(created_calendar.events)
-            correct_calendar_count = len(correct_calendar.events)
-            self.assertEqual(created_calendar_count, correct_calendar_count)
-            sorted_created_events = sorted(created_calendar.events)
-            sorted_correct_events = sorted(correct_calendar.events)
-            for i in range(created_calendar_count):
-                this_created_event = sorted_created_events[i]
-                this_correct_event = sorted_correct_events[i]
-                self.assertEqual(this_created_event.name,
-                                 this_correct_event.name)
-                self.assertEqual(this_created_event.begin,
-                                 this_correct_event.begin)
-                self.assertEqual(this_created_event.end,
-                                 this_correct_event.end)
+        created_calendar = \
+                cycle_calendar_generator.generateTeacherScheduleCalendar(
+                        self.schedule_data_good, self.setup_data)
+        self.assertIsInstance(created_calendar, cycle_calendar_generator.Calendar)
+        created_calendar_count = len(created_calendar.events)
+        correct_calendar_count = len(correct_calendar.events)
+        self.assertEqual(created_calendar_count, correct_calendar_count)
+        sorted_created_events = sorted(created_calendar.events)
+        sorted_correct_events = sorted(correct_calendar.events)
+        for i in range(created_calendar_count):
+            this_created_event = sorted_created_events[i]
+            this_correct_event = sorted_correct_events[i]
+            self.assertEqual(this_created_event.name,
+                             this_correct_event.name)
+            self.assertEqual(this_created_event.begin,
+                             this_correct_event.begin)
+            self.assertEqual(this_created_event.end,
+                             this_correct_event.end)
 
     def test_raises_valueerror_on_bad_yearly_schedule_cycle_day(self):
         bad_periodTiming = [
