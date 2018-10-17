@@ -9,6 +9,14 @@ ics = "*"
 
 [dev-packages]
 pyfakefs = "*"
+bumpversion = "*"
+wheel = "*"
+"flake8" = "*"
+watchdog = "*"
+tox = "*"
+coverage = "*"
+sphinx = "*"
+twine = "*"
 
 [requires]
 python_version = "3.7"
