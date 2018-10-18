@@ -10,6 +10,16 @@ matrix:
       dist: xenial
       sudo: true
 
+deploy:
+    provider: pypi
+    user: "ROldford"
+    password:
+        secure: "ThmSUrkibpbCrf9HuKQ45uGMzHkLwQjzIJxp3CxoMp3S10C3YNRWEPxV9X+2Mabft7lwCIOPXUtg/kL1HPlFHR8vSxZwuLEc+b1nV8H4M4mSwcFfqnHjUdrsDOrJnk5Di3sxGtlman3sYldU1rVhtQ+bauN+Eq08GMS0dB44MdNyNWqILxD9o+RHgrQ+aXzNKm6/zWyAkKdUfm2Sw5WeumZxphUYggWMUVXN26Doe/v06vXu5EuqSHZ1qlj6M77zNrNKJCTgNgUHW6qrFtTwIMYw0SCCcH8REeooWXlWQvUpdrEj+AnNA0STBNvd1gQRQCmfozbD5+UnNjmVI15yVCuGAeFcn+Tt5yr1JEyMgc6UD0drMNrLJy9IPtgBCqDkHV2PXuvK4O79buS/wmC0nQYDyRpxZdbWm7m0ebIUv9K+7NTMJtBywP14M1BmYQDsvvU13a75A3Laa2weh52piJhe/ZSKWcJl0gJIOz4VouwtfRnAfZRwOT8AlcFpFZNuCetyXi3s8mWkoNs/e1tGKB4Q1l4d9Nlerrw0FMMHUMnviQvAhcNLqyL+HRRk6puSvZb4rkxL9ni966tiqiM1/T7WoD7S6BFoYzhoSiOPyAmhGnGG6sjrgpZqtuSdsaI1mX7ziWh6hosdjoP1L5g/zEqj45ZCvKSC08H61aT0rLc="
+    on:
+        tags: true
+        branch: master
+
+
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip3 install -r requirements.txt
 
