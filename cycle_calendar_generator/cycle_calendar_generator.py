@@ -30,7 +30,7 @@ ERROR_ICAL_DIDNT_SAVE = 'A teacher iCal did not save properly'
 SHEET_SETUP_PERIOD_TIMING = 'Period Timing'
 SHEET_SETUP_CYCLEDAYSLIST = 'Cycle Days List'
 SHEET_SETUP_YEARLYSCHEDULE = 'Yearly Schedule'
-SHEET_TEACHER_TEACHERSCHEDULE = 'User Schedule'
+SHEET_USER_SCHEDULE = 'User Schedule'
 
 ALL_DONE = 'Schedule iCal generation complete!'
 
@@ -129,7 +129,7 @@ def parseTeacherSchedule(workbook, setupData):
     # TODO: Make parser convert non-datetimes into text
     return_value = ScheduleData(setupData.periodList)
     try:
-        ws_teacherSchedule = workbook[SHEET_TEACHER_TEACHERSCHEDULE]
+        ws_teacherSchedule = workbook[SHEET_USER_SCHEDULE]
         cols_teacherSchedule = tuple(ws_teacherSchedule.columns)
         # get period numbers
         schedule_periodNumberCol = cols_teacherSchedule[0]

@@ -305,7 +305,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     data_badExcel = [["This", "isn't", "the", "right"],
                      ["data", "for", "the", "parser"]]
     wb_schedule_good = openpyxl.Workbook()
-    sheetname_teacherSchedule = cycle_calendar_generator.SHEET_TEACHER_TEACHERSCHEDULE
+    sheetname_teacherSchedule = cycle_calendar_generator.SHEET_USER_SCHEDULE
     ws_teacherSchedule = wb_schedule_good.create_sheet(sheetname_teacherSchedule)
     for line in data_teacherSchedule:
         ws_teacherSchedule.append(line)
@@ -335,7 +335,8 @@ class Test_parse_teacher_schedule(unittest.TestCase):
                 self.wb_schedule_bad, self.setupData)
 
     def test_raises_valueerror_if_period_numbers_dont_match(self):
-        schedule_sheet = self.wb_schedule_good["Teacher Schedule"]
+        schedule_sheet = self.wb_schedule_good[
+                cycle_calendar_generator.SHEET_USER_SCHEDULE]
         schedule_sheet["A6"] = "6"
         self.assertRaisesRegex(
                 ValueError,
@@ -344,7 +345,8 @@ class Test_parse_teacher_schedule(unittest.TestCase):
                 self.wb_schedule_good, self.setupData)
 
     def test_raises_valueerror_if_cycle_days_dont_match(self):
-        schedule_sheet = self.wb_schedule_good["Teacher Schedule"]
+        schedule_sheet = self.wb_schedule_good[
+                cycle_calendar_generator.SHEET_USER_SCHEDULE]
         schedule_sheet["G1"] = "G7"
         self.assertRaisesRegex(
                 ValueError,
@@ -379,7 +381,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
         ["5", "", "Grade 11", "", "Grade 8", "", ""]]
     wb_schedule_good = openpyxl.Workbook()
     ws_teacherSchedule = wb_schedule_good.create_sheet(
-            cycle_calendar_generator.SHEET_TEACHER_TEACHERSCHEDULE)
+            cycle_calendar_generator.SHEET_USER_SCHEDULE)
     for line in data_teacherSchedule:
         ws_teacherSchedule.append(line)
     schedule_data_good = cycle_calendar_generator.parseTeacherSchedule(
