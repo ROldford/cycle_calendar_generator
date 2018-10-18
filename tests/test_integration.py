@@ -65,7 +65,7 @@ class Test_integration(unittest.TestCase):
     def test_script_works_in_normal_case(self):
         # run script
         subprocess.run(['python3', SCRIPT_PATH, TEST_TEMP_FOLDER])
-        # read output icals into dictionary (teacher name as key)
+        # read output icals into dictionary (user name as key)
         output_files = {}
         for file in cycle_calendar_generator.scandir_with_version_check(
                 TEST_OUTPUT_FOLDER,
@@ -73,12 +73,12 @@ class Test_integration(unittest.TestCase):
                 cycle_calendar_generator.VERSION_MINOR):
             if file.is_file():
                 path, filename = os.path.split(file.path)
-                teacher_name = os.path.splitext(filename)[0]
+                user_name = os.path.splitext(filename)[0]
                 with open(file.path) as ical:
                     calendar = ics.Calendar(ical.read())
                 sorted_events = sorted(calendar.events,
                                        key=lambda event:event.begin)
-                output_files[teacher_name] = sorted_events
+                output_files[user_name] = sorted_events
         # read expected output icals into similar dictionary
         expected_files = {}
         for file in cycle_calendar_generator.scandir_with_version_check(
@@ -87,12 +87,12 @@ class Test_integration(unittest.TestCase):
                 cycle_calendar_generator.VERSION_MINOR):
             if file.is_file():
                 path, filename = os.path.split(file.path)
-                teacher_name = os.path.splitext(filename)[0]
+                user_name = os.path.splitext(filename)[0]
                 with open(file.path) as ical:
                     calendar = ics.Calendar(ical.read())
                 sorted_events = sorted(calendar.events,
                                        key=lambda event:event.begin)
-                expected_files[teacher_name] = sorted_events
+                expected_files[user_name] = sorted_events
         # assert both dicts have same size
         self.assertEqual(len(output_files), len(expected_files))
         # assert each key in output has matching in expected

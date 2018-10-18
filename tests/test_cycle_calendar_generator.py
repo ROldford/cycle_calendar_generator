@@ -202,10 +202,10 @@ class Test_parse_schedule_setup_file(unittest.TestCase):
             cycle_calendar_generator.parseScheduleSetup,
             self.wb_setup_bad)
 
-class Test_teacher_schedule_file_scanner(fake_filesystem_unittest.TestCase):
-    # Check for teacher schedule Excel files
-    # Iterate over teacher schedule files
-    """Tests function to scan through teacher schedule files and generate icals"""
+class Test_user_schedule_file_scanner(fake_filesystem_unittest.TestCase):
+    # Check for user schedule Excel files
+    # Iterate over user schedule files
+    """Tests function to scan through user schedule files and generate icals"""
 
     # Test setup
     # TODO: Use path.join with these paths
@@ -219,28 +219,28 @@ class Test_teacher_schedule_file_scanner(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    def test_raises_error_if_no_teacher_schedule_excel_files(self):
+    def test_raises_error_if_no_user_schedule_excel_files(self):
         # TODO: Use path.join with these paths
-        folder = '/test-no-teachers'
+        folder = '/test-no-users'
         os.mkdir(folder)
         self.assertRaisesRegex(
             ValueError,
             cycle_calendar_generator.ERROR_NO_TEACHER_FILES,
-            cycle_calendar_generator.teacherScheduleFileScanner,
+            cycle_calendar_generator.userScheduleFileScanner,
             self.setupData, folder
             )
 
-class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
-    ## Read teacher schedule file
+class Test_read_user_schedule_file(fake_filesystem_unittest.TestCase):
+    ## Read user schedule file
     ## Check if file is Excel file (exception check)
-    """Tests function to read teacher schedule file and generate Workbook"""
+    """Tests function to read user schedule file and generate Workbook"""
     """Reading is assumed to work correctly"""
     """Tests only check that exceptions are raised properly on bad input"""
     # TODO: Use path.join with these paths
     test_folder_path = '/test-folder'
-    teacher_filename = 'FirstnameLastname.xlsx'
-    teacher_filepath = "{}/{}".format(test_folder_path, teacher_filename)
-    teacher_filepath_bad = "{}/{}".format('test-notafolder', teacher_filename)
+    user_filename = 'FirstnameLastname.xlsx'
+    user_filepath = "{}/{}".format(test_folder_path, user_filename)
+    user_filepath_bad = "{}/{}".format('test-notafolder', user_filename)
     data_justATextDoc = "This isn't actually an Excel file."
 
     def setUp(self):
@@ -253,22 +253,22 @@ class Test_read_teacher_schedule_file(fake_filesystem_unittest.TestCase):
             ValueError,
             cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
             cycle_calendar_generator.readTeacherScheduleFile,
-            self.teacher_filepath_bad)
+            self.user_filepath_bad)
 
     def test_raises_valueerror_if_setup_file_not_excel(self):
         """If setup file isn't an Excel file, raise ValueError"""
         # just a text file
         self.assertTrue(os.path.exists(self.test_folder_path))
-        with open(self.teacher_filepath, "x") as file:
+        with open(self.user_filepath, "x") as file:
             file.write(self.data_justATextDoc)
-        self.assertTrue(os.path.exists(self.teacher_filepath))
+        self.assertTrue(os.path.exists(self.user_filepath))
         self.assertRaisesRegex(
             ValueError,
             cycle_calendar_generator.ERROR_INVALID_SCHEDULE_FILE,
             cycle_calendar_generator.readTeacherScheduleFile,
-            self.teacher_filepath)
+            self.user_filepath)
 
-class Test_parse_teacher_schedule(unittest.TestCase):
+class Test_parse_user_schedule(unittest.TestCase):
     ## Check that file's periodNumbers (in first column) match those in setup file
     ## Check that file's cycleDays (in first row) match those in setup file
     ## Iterate over cycleDay columns, generating list of objects; for each...
@@ -276,39 +276,39 @@ class Test_parse_teacher_schedule(unittest.TestCase):
     #### [str]cycleDay
     #### [dict]schedule -> [int]periodNumber: [str]className
     ### Sort list by cycleDay property
-    """Tests function to parse teacher schedule Workbook and make data object"""
+    """Tests function to parse user schedule Workbook and make data object"""
     wb_setup = make_setup_excel_good()
     setupData = cycle_calendar_generator.parseScheduleSetup(
         wb_setup
         )
-    data_teacherSchedule = [
+    data_userSchedule = [
         ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
         ["1", "Grade 8", "", "", "Grade 11", "", "Grade 8"],
         ["2", "", "Grade 8", "", "", "Grade 11", ""],
         ["3", "Lunch", "Lunch", "Lunch", "Lunch", "Lunch", "Lunch"],
         ["4", "Grade 11", "", "Grade 8", "", "", "Grade 11"],
         ["5", "", "Grade 11", "", "Grade 8", "", ""]]
-    parsed_teacherSchedule = cycle_calendar_generator.ScheduleData(
+    parsed_userSchedule = cycle_calendar_generator.ScheduleData(
         ["1", "2", "3", "4", "5"])
-    parsed_teacherSchedule.addScheduleDay(
+    parsed_userSchedule.addScheduleDay(
         ["A1", "Grade 8", "", "Lunch", "Grade 11", ""])
-    parsed_teacherSchedule.addScheduleDay(
+    parsed_userSchedule.addScheduleDay(
         ["B2", "", "Grade 8", "Lunch", "", "Grade 11"])
-    parsed_teacherSchedule.addScheduleDay(
+    parsed_userSchedule.addScheduleDay(
         ["C3", "", "", "Lunch", "Grade 8", ""])
-    parsed_teacherSchedule.addScheduleDay(
+    parsed_userSchedule.addScheduleDay(
         ["D4", "Grade 11", "", "Lunch", "", "Grade 8"])
-    parsed_teacherSchedule.addScheduleDay(
+    parsed_userSchedule.addScheduleDay(
         ["E5", "", "Grade 11", "Lunch", "", ""])
-    parsed_teacherSchedule.addScheduleDay(
+    parsed_userSchedule.addScheduleDay(
         ["F6", "Grade 8", "", "Lunch", "Grade 11", ""])
     data_badExcel = [["This", "isn't", "the", "right"],
                      ["data", "for", "the", "parser"]]
     wb_schedule_good = openpyxl.Workbook()
-    sheetname_teacherSchedule = cycle_calendar_generator.SHEET_USER_SCHEDULE
-    ws_teacherSchedule = wb_schedule_good.create_sheet(sheetname_teacherSchedule)
-    for line in data_teacherSchedule:
-        ws_teacherSchedule.append(line)
+    sheetname_userSchedule = cycle_calendar_generator.SHEET_USER_SCHEDULE
+    ws_userSchedule = wb_schedule_good.create_sheet(sheetname_userSchedule)
+    for line in data_userSchedule:
+        ws_userSchedule.append(line)
     wb_schedule_bad = openpyxl.Workbook()
     ws_bad = wb_schedule_bad.active
     for line in data_badExcel:
@@ -323,8 +323,8 @@ class Test_parse_teacher_schedule(unittest.TestCase):
                 self.setupData)
         self.assertIsInstance(parsed_schedule,
                               cycle_calendar_generator.ScheduleData)
-        self.assertEqual(self.parsed_teacherSchedule.teacherSchedule,
-                         parsed_schedule.teacherSchedule)
+        self.assertEqual(self.parsed_userSchedule.userSchedule,
+                         parsed_schedule.userSchedule)
 
     def test_raises_valueerror_if_schedule_unparseable(self):
         """If Excel file can't be parsed following preset format, raise ValueError"""
@@ -354,7 +354,7 @@ class Test_parse_teacher_schedule(unittest.TestCase):
                 cycle_calendar_generator.parseTeacherSchedule,
                 self.wb_schedule_good, self.setupData)
 
-class Test_generate_teacher_schedule_calendar(unittest.TestCase):
+class Test_generate_user_schedule_calendar(unittest.TestCase):
     ## Given ScheduleData and SetupData objects, create new iCal Calendar object
     ## Iterate over date:cycleDay dict, for each...
     ### Find dailySchedule object matching cycleDay
@@ -372,7 +372,7 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
     wb_setup = make_setup_excel_good()
     setup_data = cycle_calendar_generator.parseScheduleSetup(wb_setup)
     # ScheduleData
-    data_teacherSchedule = [
+    data_userSchedule = [
         ["Period Number", "A1", "B2", "C3", "D4", "E5", "F6"],
         ["1", "Grade 8", "", "", "Grade 11", "", "Grade 8"],
         ["2", "", "Grade 8", "", "", "Grade 11", ""],
@@ -380,10 +380,10 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
         ["4", "Grade 11", "", "Grade 8", "", "", "Grade 11"],
         ["5", "", "Grade 11", "", "Grade 8", "", ""]]
     wb_schedule_good = openpyxl.Workbook()
-    ws_teacherSchedule = wb_schedule_good.create_sheet(
+    ws_userSchedule = wb_schedule_good.create_sheet(
             cycle_calendar_generator.SHEET_USER_SCHEDULE)
-    for line in data_teacherSchedule:
-        ws_teacherSchedule.append(line)
+    for line in data_userSchedule:
+        ws_userSchedule.append(line)
     schedule_data_good = cycle_calendar_generator.parseTeacherSchedule(
             wb_schedule_good, setup_data)
 
@@ -503,15 +503,15 @@ class Test_generate_teacher_schedule_calendar(unittest.TestCase):
                 self.schedule_data_good,
                 bad_setup_data)
 
-class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
-    ## Save Calendar, using filename from teacher schedule file
-    """Tests function to save teacher schedule ical file"""
+class Test_save_user_schedule_ical(fake_filesystem_unittest.TestCase):
+    ## Save Calendar, using filename from user schedule file
+    """Tests function to save user schedule ical file"""
 
     # Test setup
     test_folder_path = "/test-folder"
     output_folder_path = "/test-folder/output"
-    teacher_name = "Test Teacher"
-    teacher_calendar_data = [
+    user_name = "Test Teacher"
+    user_calendar_data = [
             ["20180831 08:00:00", "20180831 09:00:00", "Grade 8"],
             ["20180831 10:00:00", "20180831 11:00:00", "Lunch"],
             ["20180831 11:00:00", "20180831 12:00:00", "Grade 11"],
@@ -528,8 +528,8 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
             ["20180907 08:00:00", "20180907 09:00:00", "Grade 8"],
             ["20180907 10:00:00", "20180907 11:00:00", "Lunch"],
             ["20180907 11:00:00", "20180907 12:00:00", "Grade 11"]]
-    teacher_calendar = Calendar()
-    for line in teacher_calendar_data:
+    user_calendar = Calendar()
+    for line in user_calendar_data:
         e = Event()
         begin, end, name = line
         begin = arrow.get(begin, "YYYYMMDD HH:mm:ss")
@@ -537,7 +537,7 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
         e.begin = begin
         e.end = end
         e.name = name
-        teacher_calendar.events.add(e)
+        user_calendar.events.add(e)
 
     def setUp(self):
         self.setUpPyfakefs()
@@ -546,12 +546,12 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
 
     def test_makes_ical_file_with_right_filename(self):
         saves_correctly = cycle_calendar_generator.saveTeacherScheduleIcal(
-                self.teacher_calendar,
-                self.teacher_name,
+                self.user_calendar,
+                self.user_name,
                 self.output_folder_path)
         self.assertTrue(saves_correctly)
         calendar_filepath = "{}/{}.ics".format(self.output_folder_path,
-                                               self.teacher_name)
+                                               self.user_name)
         self.assertTrue(os.path.exists(calendar_filepath))
 
     def test_raises_error_if_incorrect_output_path(self):
@@ -560,4 +560,4 @@ class Test_save_teacher_schedule_ical(fake_filesystem_unittest.TestCase):
                 ValueError,
                 cycle_calendar_generator.ERROR_INVALID_FOLDER,
                 cycle_calendar_generator.saveTeacherScheduleIcal,
-                self.teacher_calendar, self.teacher_name, '/test-notafolder')
+                self.user_calendar, self.user_name, '/test-notafolder')

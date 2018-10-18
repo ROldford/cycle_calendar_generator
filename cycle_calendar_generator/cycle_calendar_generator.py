@@ -24,8 +24,8 @@ ERROR_INVALID_FOLDER = 'Not a valid folder'
 ERROR_INVALID_SETUP_FILE = 'Setup file does not follow proper format'
 ERROR_SETUP_FILE_NOT_EXCEL = 'Setup file is not a readable Excel file'
 ERROR_INVALID_SCHEDULE_FILE = 'Schedule file is not a readable Excel file'
-ERROR_NO_TEACHER_FILES = 'Folder has no Excel files for teachers'
-ERROR_ICAL_DIDNT_SAVE = 'A teacher iCal did not save properly'
+ERROR_NO_TEACHER_FILES = 'Folder has no Excel files for users'
+ERROR_ICAL_DIDNT_SAVE = 'A user iCal did not save properly'
 
 SHEET_SETUP_PERIOD_TIMING = 'Period Timing'
 SHEET_SETUP_CYCLEDAYSLIST = 'Cycle Days List'
@@ -129,10 +129,10 @@ def parseTeacherSchedule(workbook, setupData):
     # TODO: Make parser convert non-datetimes into text
     return_value = ScheduleData(setupData.periodList)
     try:
-        ws_teacherSchedule = workbook[SHEET_USER_SCHEDULE]
-        cols_teacherSchedule = tuple(ws_teacherSchedule.columns)
+        ws_userSchedule = workbook[SHEET_USER_SCHEDULE]
+        cols_userSchedule = tuple(ws_userSchedule.columns)
         # get period numbers
-        schedule_periodNumberCol = cols_teacherSchedule[0]
+        schedule_periodNumberCol = cols_userSchedule[0]
         schedule_periodNumberCol = schedule_periodNumberCol[1:]
         setup_periodList = setupData.periodList
         for cell in schedule_periodNumberCol:
@@ -141,9 +141,9 @@ def parseTeacherSchedule(workbook, setupData):
                     '{}: {}'.format(
                         ERROR_INVALID_SCHEDULE_FILE,
                         'Check that period numbers are the same ' +
-                        'in teacher schedule and setup file'))
+                        'in user schedule and setup file'))
         # cycle through columns and add schedule days
-        schedule_dayCols = cols_teacherSchedule[1:]
+        schedule_dayCols = cols_userSchedule[1:]
         for day in schedule_dayCols:
             if day[0].value in setupData.cycleDaysList:
                 # turn list of cell objects to list of values
@@ -171,9 +171,9 @@ def generateTeacherScheduleCalendar(schedule, setupData):
     # Get the date and schedule day
     try:
         for date_key in setupData.yearlySchedule:
-            # Look up teacher's schedule for that schedule day
+            # Look up user's schedule for that schedule day
             schedule_day = setupData.yearlySchedule[date_key]
-            todays_schedule = schedule.teacherSchedule[schedule_day]
+            todays_schedule = schedule.userSchedule[schedule_day]
             # For each entry in that schedule
             for period_number in todays_schedule:
                 period_name = todays_schedule[period_number]
@@ -203,14 +203,14 @@ def generateTeacherScheduleCalendar(schedule, setupData):
     return return_value
 
 
-def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
+def saveTeacherScheduleIcal(user_calendar, user_name, folder_path):
     return_value = False
     # Check if folder exists
     try:
         if (os.path.exists(folder_path)):
-            teacher_filepath = "{}/{}.ics".format(folder_path, teacher_name)
-            with open(teacher_filepath, 'w+') as f:
-                f.writelines(teacher_calendar)
+            user_filepath = "{}/{}.ics".format(folder_path, user_name)
+            with open(user_filepath, 'w+') as f:
+                f.writelines(user_calendar)
             return_value = True
         else:
             raise ValueError(ERROR_INVALID_FOLDER)
@@ -222,7 +222,7 @@ def saveTeacherScheduleIcal(teacher_calendar, teacher_name, folder_path):
     return return_value
 
 
-def teacherScheduleFileScanner(setup_data, folder):
+def userScheduleFileScanner(setup_data, folder):
     return_value = False
     try:
         # Check for output sub-folder in given folder
@@ -250,22 +250,22 @@ def teacherScheduleFileScanner(setup_data, folder):
             # read filename and remove extension
             try:
                 path, filename = os.path.split(entry)
-                teacher_name = os.path.splitext(filename)[0]
+                user_name = os.path.splitext(filename)[0]
                 # run readTeacher..., parseTeacher..., etc.
                 workbook = readTeacherScheduleFile(entry)
                 schedule = parseTeacherSchedule(workbook, setup_data)
-                teacher_calendar = generateTeacherScheduleCalendar(schedule,
-                                                                   setup_data)
+                user_calendar = generateTeacherScheduleCalendar(schedule,
+                                                                setup_data)
                 # When saving, use read filename to name new file
-                if (not saveTeacherScheduleIcal(teacher_calendar, teacher_name,
+                if (not saveTeacherScheduleIcal(user_calendar, user_name,
                                                 output_folder_path)):
                     raise RuntimeError("{}: {}".format(ERROR_ICAL_DIDNT_SAVE,
-                                                       teacher_name))
+                                                       user_name))
             except Exception as e:
                 exception_type = str(type(e))
                 for case in switch(exception_type):
                     if case():
-                        raise type(e)('{} - {}'.format(teacher_name,
+                        raise type(e)('{} - {}'.format(user_name,
                                                        str(e))) from e
         return_value = True
     except Exception as e:
@@ -280,7 +280,7 @@ def main():
     folder = getArgs()
     setup_file = readScheduleSetupFile(folder)
     setup_data = parseScheduleSetup(setup_file)
-    if teacherScheduleFileScanner(setup_data, folder):
+    if userScheduleFileScanner(setup_data, folder):
         print(ALL_DONE)
 
 
@@ -314,7 +314,7 @@ class SetupData:
 
 class ScheduleData:
     def __init__(self, periodList):
-        self.teacherSchedule = {}
+        self.userSchedule = {}
         self.periodList = periodList
 
     def addScheduleDay(self, schedule_list):
@@ -323,7 +323,7 @@ class ScheduleData:
         if len(schedule_periods_list) != len(self.periodList):
             raise ValueError(ERROR_INVALID_SCHEDULE_FILE)
         schedule_day = dict(zip(self.periodList, schedule_periods_list))
-        self.teacherSchedule[schedule_day_key] = schedule_day
+        self.userSchedule[schedule_day_key] = schedule_day
 
 
 class switch(object):
