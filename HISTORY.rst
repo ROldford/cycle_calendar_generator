@@ -7,12 +7,7 @@ History
 
 * First release on PyPI.
 
-0.1.1 (2018-10-18)
-------------------
+0.1.1 - 0.1.3 (2018-10-18)
+--------------------------
 
-* Attempt to fix issues with Travis CI's PyPI deployment
-
-0.1.2 (2018-10-18)
-------------------
-
-* Further attempt to fix issues with Travis CI's PyPI deployment
+* Attempts to fix issues with Travis CI's PyPI deployment

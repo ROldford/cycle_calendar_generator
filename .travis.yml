@@ -1,27 +1,19 @@
-# Config file for automatic testing at travis-ci.org
-
 language: python
 python:
-  - 3.5
-  - 3.6
+- 3.5
+- 3.6
 matrix:
   include:
-    - python: 3.7
-      dist: xenial
-      sudo: true
-
+  - python: 3.7
+    dist: xenial
+    sudo: true
 deploy:
-    provider: pypi
-    user: "ROldford"
-    password:
-        secure: "lOkwJGJyLUZocN2rKPAKRO3gGPE89ri+6G3/F77gW6+zWkXKTqaBChImpTCooYQCWf3UMyJt1Pvxuf4Y4ooyzMG+fcDK/EHyCcEzfvO1WmeuCnxiXrrDFXkiT7b1euzYkPdHSts7GbhCkG0iKCLFhtqVL8u/pO4eBLR9/qrT3xBZn84RbJjbU28+5TeENpjx0e0ebbxQv93mMiPtjv/0Oc6X/ZaZLbLBWj3qy17FUPdLuGfwTWd+heN0tPzcgrNoDxRpCG9K6VO2wiiG11Psw4+DtCRRR/l/XkXSI3f9Ckqtn4xjcfZivj8qBCYvkYCmOvsqVBLPhnK9WWnYLgRUGSJd7E7YPeRZ1/+rtij4aFmR2YOpz3dbFYJljahsWYBO+hA6Wokmr5zjOdzr0y+0EruR/Y0i0GRONrOoThfTPWB7zq4JiR8KEa5pFTeTU4OWUaV+QgWb/XsH8/2VADNUsfUAoyPNU7GHXUFsNZ5oU6TZHCP4BXhjciysuQH+fD9lmaGM45K3PyfA1GVJSrvoyhgYfx5ORVr7GT610QtGRQEuqUJmTDJWh8Lrq/cjWisNUdGlMmAkSj3lQ+11NKgLc2O/Oq/0GLPeIeSqfZRHPFoa2yEl63qzWaYDhmeuSVNEuJ+LJyFntIuDqB3DlnuiGorcZeJqvOlkwlKEKHwdHTo="
-    on:
-        tags: true
-        branch: master
-
-
-# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+  provider: pypi
+  user: ROldford
+  password:
+    secure: Ng+DnLfFhza5l+QMLHgM6zRj5X2gN+cyc8AxsGk+Am1Z8SJUEHwDz4ZvA0Pym2TNYqPDC3p3UCbmDUf46y+MwL6FG+09ykGONjCUs5FHc531Uk2W3nEC9A3YR5OD1azBGS9r21Go7E9Kgq0mkK615T9BVhXYpTQitpLRlLkkIgBcNUahH5hlsUnTkl0voYXWt7WpHnFakhvdGj+rucVe9QYcsoGGu+4Y1zFsYkb67P/wKX8HARcrOYu8ueU5CQapGkSqMUSKlRmzyp2eFjHpr0kd4nN8gXdF8xx5m9yZnG3jr/Kl3dAkVapfqHOaNWS2pJ6Dq5a13zZ6no9Jt/PEhe32XZYyPxQQfi4ah4tGD26F3ZW2/QlQ6oyLAP/4oHxj6gUcirUkQwBqYF+W5gSQpR70knkD1fdkG8OjQg8cC1Xn1bwEBOvcjHycfem0dTCrHTXz7G0G7aW+5AQIhhGD/jelDmeyc8pX5jBv2qsk/eMztX/VmRu/zIPi0bt2p91zCFSTy/j/Moo6ml2mLkUchEse+xwvFLX59vA6dKyzHDpp7viWtfzTx8UqLgISpAqYN5uzDP/dj9+Lg0Hiq1uceqHOTmX3oW9v0820CdqSLpgvFrLY2rHKKWTf3535GgRqQg7X+fNKdtgnICD7/0Y++1rEXyj9xiPXwHHk6JmQMZ0=
+  on:
+    tags: true
+    branch: master
 install: pip3 install -r requirements.txt
-
-# Command to run tests, e.g. python setup.py test
 script: python setup.py test
