@@ -11,6 +11,10 @@ Cycle Calendar Generator
         :target: https://travis-ci.org/ROldford/cycle_calendar_generator
         :alt: Travis CI Status
 
+.. image:: https://pyup.io/repos/github/ROldford/cycle_calendar_generator/shield.svg
+     :target: https://pyup.io/repos/github/ROldford/cycle_calendar_generator/
+     :alt: Updates
+
 .. image:: https://readthedocs.org/projects/cycle-calendar-generator/badge/?version=latest
         :target: https://cycle-calendar-generator.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
