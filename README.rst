@@ -138,7 +138,7 @@ For versions 3.5+
         ``tox``
 
 It's recommended to use pyenv_ to install Python versions required by tox.
-pyenv can be installed using Homebrew_.::
+pyenv can be installed using Homebrew_::
 
         brew update
         brew install pyenv

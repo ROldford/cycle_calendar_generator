@@ -83,7 +83,7 @@ Ready to contribute? Here's how to set up `cycle_calendar_generator` for local d
     $ flake8 cycle_calendar_generator tests
     $ python setup.py test or py.test
 
-   tox should be used outside of the pipenv shell.::
+   tox should be used outside of the pipenv shell::
 
     $ deactivate
     $ tox
