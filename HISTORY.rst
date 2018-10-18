@@ -11,3 +11,8 @@ History
 ------------------
 
 * Attempt to fix issues with Travis CI's PyPI deployment
+
+0.1.2 (2018-10-18)
+------------------
+
+* Further attempt to fix issues with Travis CI's PyPI deployment
