@@ -59,6 +59,8 @@ Usage
 
 5. Schedule iCal files are found in the /output folder under the folder with your input Excel files.
 
+.. _examples:
+
 Examples
 --------
 

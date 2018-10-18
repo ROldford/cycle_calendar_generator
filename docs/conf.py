@@ -20,6 +20,7 @@
 #
 import os
 import sys
+from recommonmark.parser import CommonMarkParser
 sys.path.insert(0, os.path.abspath('..'))
 
 import cycle_calendar_generator
@@ -37,11 +38,14 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+#
+source_parsers = {'.md': CommonMarkParser,}
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
@@ -84,13 +88,16 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'prev_next_buttons_location': 'both',
+    'style_external_links': True, 
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -158,6 +165,3 @@ texinfo_documents = [
      'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

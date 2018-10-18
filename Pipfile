@@ -17,6 +17,8 @@ tox = "*"
 coverage = "*"
 sphinx = "*"
 twine = "*"
+recommonmark = "*"
+sphinx-rtd-theme = "*"
 
 [requires]
 python_version = "3.7"
