@@ -30,7 +30,7 @@ ERROR_ICAL_DIDNT_SAVE = 'A teacher iCal did not save properly'
 SHEET_SETUP_PERIOD_TIMING = 'Period Timing'
 SHEET_SETUP_CYCLEDAYSLIST = 'Cycle Days List'
 SHEET_SETUP_YEARLYSCHEDULE = 'Yearly Schedule'
-SHEET_TEACHER_TEACHERSCHEDULE = 'Teacher Schedule'
+SHEET_TEACHER_TEACHERSCHEDULE = 'User Schedule'
 
 ALL_DONE = 'Schedule iCal generation complete!'
 
