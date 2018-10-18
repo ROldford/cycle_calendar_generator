@@ -6,3 +6,8 @@ History
 ------------------
 
 * First release on PyPI.
+
+0.1.1 (2018-10-18)
+------------------
+
+* Attempt to fix issues with Travis CI's PyPI deployment
