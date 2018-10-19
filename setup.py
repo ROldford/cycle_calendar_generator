@@ -43,4 +43,9 @@ setup(
     url='https://github.com/ROldford/cycle_calendar_generator',
     version='0.1.8',
     zip_safe=False,
+    entry_points = {
+        'console_scripts': [
+            'cycle_calendar_generator = cycle_calendar_generator.__main__:main'
+        ]
+    }
 )

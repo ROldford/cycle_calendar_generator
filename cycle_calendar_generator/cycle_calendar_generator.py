@@ -276,14 +276,6 @@ def userScheduleFileScanner(setup_data, folder):
     return return_value
 
 
-def main():
-    folder = getArgs()
-    setup_file = readScheduleSetupFile(folder)
-    setup_data = parseScheduleSetup(setup_file)
-    if userScheduleFileScanner(setup_data, folder):
-        print(ALL_DONE)
-
-
 # Convenience objects/functions
 class SetupData:
     def __init__(self):
@@ -365,7 +357,3 @@ def scandir_with_version_check(folder, version_major, version_minor):
     else:
         raise RuntimeError('Please use Python 3.5 or higher')
     return return_value
-
-
-if __name__ == "__main__":
-    main()

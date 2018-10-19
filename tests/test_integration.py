@@ -25,10 +25,7 @@ TEST_FILES_FOLDER = os.path.join(INTEGRATION_TEST_FOLDER, 'testing_files')
 TEST_EXPECTED_OUTPUT_FOLDER = os.path.join(INTEGRATION_TEST_FOLDER, 'expected')
 TEST_TEMP_FOLDER = os.path.join(INTEGRATION_TEST_FOLDER, 'temp')
 TEST_OUTPUT_FOLDER = os.path.join(TEST_TEMP_FOLDER, 'output')
-SCRIPT_PATH = os.path.join(
-    str(Path(CURRENT_WORKING_DIRECTORY).parent),
-    'cycle_calendar_generator','cycle_calendar_generator.py'
-    )
+SCRIPT_NAME = 'cycle_calendar_generator'
 
 
 class Test_integration(unittest.TestCase):
@@ -64,7 +61,8 @@ class Test_integration(unittest.TestCase):
 
     def test_script_works_in_normal_case(self):
         # run script
-        subprocess.run(['python3', SCRIPT_PATH, TEST_TEMP_FOLDER])
+        exit_code = subprocess.run(['python3', '-m',
+                                    SCRIPT_NAME, TEST_TEMP_FOLDER])
         # read output icals into dictionary (user name as key)
         output_files = {}
         for file in cycle_calendar_generator.scandir_with_version_check(
