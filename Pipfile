@@ -6,6 +6,15 @@ name = "pypi"
 [packages]
 openpyxl = "*"
 ics = "*"
+wheel = "~=0.33"
+pyyaml = "~=5.1"
+pyparsing = "~=2.4"
+jinja2 = "~=2.10"
+flake8 = "~=3.7"
+filelock = "~=3.0"
+coverage = "~=4.5"
+pytz = "~=2019.1"
+packaging = "~=19.0"
 
 [dev-packages]
 pyfakefs = "*"

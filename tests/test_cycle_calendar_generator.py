@@ -23,7 +23,7 @@ def convert_time_to_day_fraction(hours, minutes):
     return timediff.total_seconds()/secs_in_day
 
 def convert_date_string_to_datetime(datestring):
-    parsed_datestring = arrow.get(datestring, "MMMM D YYYY")
+    parsed_datestring = arrow.get(datestring, "MMMM D, YYYY")
     return parsed_datestring.datetime
 
 def convert_timestring_to_time(timestring):
