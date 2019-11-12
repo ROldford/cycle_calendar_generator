@@ -17,7 +17,7 @@ pytz = "~=2019.1"
 packaging = "~=19.0"
 
 [dev-packages]
-pyfakefs = "*"
+pyfakefs = "~=3.6"
 bumpversion = "*"
 wheel = "*"
 "flake8" = "*"
