@@ -16,3 +16,9 @@ History
 ------------------
 
 * Program can now be installed as a Unix-style command line application
+
+1.0.0 (2020-02-25)
+------------------
+
+* No longer works on Python 3.5
+* Dependency update

@@ -19,9 +19,9 @@ Cycle Calendar Generator
         :target: https://cycle-calendar-generator.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://img.shields.io/badge/python-3.5+-blue.svg
-        :target: https://www.python.org/download/releases/3.5.0/)
-        :alt: Compatible with Python 3.5+
+.. image:: https://img.shields.io/badge/python-3.6+-blue.svg
+        :target: https://www.python.org/)
+        :alt: Compatible with Python 3.6+
 
 
 *Generates iCal files for class schedules for schools using an N-day cycle*
@@ -146,7 +146,7 @@ pyenv can be installed using Homebrew_::
 
         brew update
         brew install pyenv
-        pyenv install 3.5.6 3.6.6 3.7.0
+        pyenv install 3.6.6 3.7.6
 
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _Homebrew: https://brew.sh/
