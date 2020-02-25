@@ -1,5 +1,4 @@
 arrow==0.14.7
-coverage==4.5.4
 entrypoints==0.3
 et-xmlfile==1.0.1
 filelock==3.0.12
