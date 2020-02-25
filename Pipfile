@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-openpyxl = "*"
+openpyxl = "~=3.0"
 ics = "*"
 wheel = "~=0.33"
 pyyaml = "~=5.1"
@@ -19,13 +19,13 @@ packaging = "~=19.0"
 [dev-packages]
 pyfakefs = "~=3.6"
 bumpversion = "*"
-wheel = "*"
+wheel = "~=0.34"
 "flake8" = "*"
-watchdog = "*"
-tox = "*"
+watchdog = "~=0.10"
+tox = "~=3.14"
 coverage = "*"
-sphinx = "*"
-twine = "*"
+sphinx = "~=2.4"
+twine = "~=3.1"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
 
