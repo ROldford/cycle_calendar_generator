@@ -8,7 +8,7 @@ Is your school on a 6-day cycle? 7-day? Cycle Calendar Generator can make iCal f
 Quickstart
 ==========
 
-Assuming you have Python 3.5+ installed, use `pip3 <http://www.pip-installer.org/>`. ::
+Assuming you have Python 3.6+ installed, use `pip3 <http://www.pip-installer.org/>`. ::
 
     $ pip3 install cycle_calendar_generator
 
