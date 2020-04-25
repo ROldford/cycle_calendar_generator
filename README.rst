@@ -170,6 +170,8 @@ Excel file reading was made possible by the openpyxl_ package, while iCal file r
 .. _openpyxl: https://bitbucket.org/openpyxl/openpyxl/src
 .. _ics: https://github.com/C4ptainCrunch/ics.py
 
+[ ~ Dependencies scanned by `PyUp.io <https://pyup.io/>`_ ~ ]
+
 Licence
 -------
 
