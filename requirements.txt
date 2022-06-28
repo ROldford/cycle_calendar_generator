@@ -1,5 +1,5 @@
 -i https://pypi.org/simple/
-arrow==0.14.7
+arrow==0.15.1
 entrypoints==0.3
 et-xmlfile==1.0.1
 filelock==3.0.12
