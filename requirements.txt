@@ -14,7 +14,7 @@ flake8==3.7.9
 ics==0.7
 jdcal==1.4.1
 jinja2==2.11.3
-markupsafe==2.1.1; python_version >= '3.7'
+markupsafe==2.1.2; python_version >= '3.7'
 mccabe==0.6.1
 openpyxl==3.0.3
 packaging==19.2
